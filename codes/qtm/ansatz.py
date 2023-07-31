@@ -96,6 +96,45 @@ def create_stargraph_ansatz(qc: qiskit.QuantumCircuit, thetas: np.ndarray, num_l
     return qc
 
 
+def create_parameterized_polygongraph_ansatz(num_qubits: int = 3, num_layers: int = 1):
+    """Create graph ansatz
+
+    Args:
+        - qc (qiskit.QuantumCircuit): init circuit
+        - thetas (np.ndarray): parameters
+
+    Returns:
+        - qiskit.QuantumCircuit: init circuit
+    """
+
+    qc = qiskit.QuantumCircuit(num_qubits, num_qubits)
+    thetas = qiskit.circuit.ParameterVector('theta', 2*num_qubits*num_layers)
+    
+    j = 0
+    for _ in range(0, num_layers, 1):
+        for i in range(0, num_qubits):
+            qc.ry(thetas[j], i)
+            j += 1
+        for i in range(0, num_qubits - 1, 2):
+            qc.cz(i, i + 1)
+        if num_qubits % 2 == 1:
+            for i in range(0, num_qubits - 1):
+                qc.ry(thetas[j], i)
+                j += 1
+        else:
+            for i in range(0, num_qubits):
+                qc.ry(thetas[j], i)
+                j += 1
+        for i in range(1, num_qubits - 1, 2):
+            qc.cz(i, i + 1)
+        if num_qubits % 2 == 1:
+            qc.ry(thetas[j], num_qubits - 1)
+            j += 1
+        qc.cz(0, num_qubits - 1)
+        qc.barrier()
+    return qc
+
+
 def create_polygongraph_ansatz(qc: qiskit.QuantumCircuit, thetas: np.ndarray, num_layers: int):
     """Create graph ansatz
 

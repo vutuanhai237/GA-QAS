@@ -152,7 +152,7 @@ def calculate_state_preparation_metrics_tiny(create_u_func: types.FunctionType, 
     return trace, fidelity
 
 
-def calculate_state_preparation_metrics(create_u_func: types.FunctionType, vdagger: qiskit.QuantumCircuit, thetass, **kwargs):
+def calculate_state_preparation_metrics(u: qiskit.QuantumCircuit, vdagger: qiskit.QuantumCircuit, thetass, **kwargs):
     traces = []
     fidelities = []
     n = vdagger.num_qubits
@@ -161,17 +161,14 @@ def calculate_state_preparation_metrics(create_u_func: types.FunctionType, vdagg
         rho = qiskit.quantum_info.DensityMatrix.from_instruction(
             vdagger.inverse())
         # Preparation state
-        u = qiskit.QuantumCircuit(n, n)
-        u = create_u_func(u, thetas, **kwargs)
-        sigma = qiskit.quantum_info.DensityMatrix.from_instruction(u)
+        qc = u.bind_parameters(thetas)
+        sigma = qiskit.quantum_info.DensityMatrix.from_instruction(qc)
         # Calculate the metrics
         trace, fidelity = qtm.utilities.get_metrics(rho, sigma)
         traces.append(trace)
         fidelities.append(fidelity)
 
-    u = qiskit.QuantumCircuit(n, n)
-    u = create_u_func(u, thetass[-1], **kwargs)
-    ce = concentratable_entanglement(u)
+    ce = concentratable_entanglement(qc)
     return traces, fidelities, ce
 
 
