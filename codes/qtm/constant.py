@@ -1,5 +1,11 @@
 import qiskit
 import numpy as np
+from qiskit.circuit.library.standard_gates import (IGate, U1Gate, U2Gate, U3Gate, XGate,
+                                                   YGate, ZGate, HGate, SGate, SdgGate, TGate,
+                                                   TdgGate, RXGate, RYGate, RZGate, CXGate,
+                                                   CYGate, CZGate, CHGate, CRZGate, CU1Gate,
+                                                   CU3Gate, SwapGate, RZZGate,
+                                                   CCXGate, CSwapGate)
 
 # Training hyperparameter
 num_shots = 10000
@@ -109,3 +115,29 @@ look_up_operator = {
     'IsingYY': 'RYY',
     'IsingZZ': 'RZZ',
 }
+
+
+
+one_q_ops = [HGate, RXGate, RYGate, RZGate]
+
+one_param = [RXGate, RYGate, RZGate]
+two_param = [U2Gate]
+three_param = [U3Gate]
+
+two_q_ops = [CXGate]
+three_q_ops = [CCXGate]
+
+# one_q_ops = [IGate, U1Gate, U2Gate, U3Gate, XGate, YGate, ZGate, HGate, SGate, SdgGate, TGate, TdgGate, RXGate, RYGate, RZGate]
+# two_q_ops = [CXGate, CYGate, CZGate, CHGate, CRZGate,
+#              CU1Gate, CU3Gate, SwapGate, RZZGate]
+# one_q_ops = [RXGate, RYGate, RZGate]
+
+
+# one_q_ops = [XGate, YGate, ZGate, HGate, RXGate, RYGate, RZGate]
+
+# one_param = [U1Gate, RXGate, RYGate, RZGate, RZZGate, CU1Gate, CRZGate]
+# two_param = [U2Gate]
+# three_param = [U3Gate, CU3Gate]
+
+# two_q_ops = [CXGate, CRZGate]
+# three_q_ops = [CCXGate, CSwapGate]

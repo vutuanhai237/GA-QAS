@@ -4,50 +4,13 @@ import qtm.base
 import qtm.state
 import numpy as np
 import random
-def u_onequbit_ansatz(qc: qiskit.QuantumCircuit, thetas: np.ndarray, wire: int = 0):
-    """Return a simple series of 1 qubit gate
-
-    Args:
-        - qc (QuantumCircuit): init circuit
-        - thetas (np.ndarray): parameters
-        - wire (int): position that the gate carries on
-
-    Returns:
-        - QuantumCircuit: The circuit which have added gates
-    """
-    if isinstance(wire, int) != True:
-        wire = (wire['wire'])
-    qc.rz(thetas[0], wire)
-    qc.rx(thetas[1], wire)
-    qc.rz(thetas[2], wire)
-    return qc
-
-
-def u_onequbith_ansatz(qc: qiskit.QuantumCircuit, thetas: np.ndarray, wire: int):
-    """Return a simple series of 1 qubit - gate which is measured in X-basis
-
-    Args:
-        - qc (QuantumCircuit): init circuit
-        - thetas (np.ndarray): parameters
-        - wire (int): position that the gate carries on   
-
-    Returns:
-        - QuantumCircuit: The circuit which have added gates
-    """
-    if isinstance(wire, int) != True:
-        wire = (wire['wire'])
-    qc.rz(thetas[0], wire)
-    qc.rx(thetas[1], wire)
-    qc.rz(thetas[2], wire)
-    qc.h(wire)
-    return qc
 
 
 ###########################
 ######## GHZ State ########
 ###########################
 
-def create_graph_ansatz(qc: qiskit.QuantumCircuit, thetas: np.ndarray):
+def create_graph_ansatz(num_qubits, thetas: np.ndarray):
     """Create graph ansatz
 
     Args:
@@ -57,8 +20,10 @@ def create_graph_ansatz(qc: qiskit.QuantumCircuit, thetas: np.ndarray):
     Returns:
         - (qiskit.QuantumCircuit): init circuit
     """
+    qc = qiskit.QuantumCircuit(num_qubits)
     n = qc.num_qubits
     edges = qtm.constant.edges_graph_state[n]
+    thetas = qiskit.circuit.ParameterVector('theta', len(edges))
     i = 0
     for edge in edges:
         control_bit = int(edge.split('-')[0])
@@ -68,7 +33,7 @@ def create_graph_ansatz(qc: qiskit.QuantumCircuit, thetas: np.ndarray):
     return qc
 
 
-def create_stargraph_ansatz(qc: qiskit.QuantumCircuit, thetas: np.ndarray, num_layers: int):
+def create_stargraph_ansatz(num_qubits: int, num_layers: int):
     """Create star graph ansatz
 
     Args:
@@ -78,11 +43,9 @@ def create_stargraph_ansatz(qc: qiskit.QuantumCircuit, thetas: np.ndarray, num_l
     Returns:
         - qiskit.QuantumCircuit: init circuit
     """
+    thetas = qiskit.circuit.ParameterVector('theta', num_layers * (2 * n - 2))
+    qc = qiskit.QuantumCircuit(num_qubits)
     n = qc.num_qubits
-    if len(thetas) != num_layers*(2*n - 2):
-        raise ValueError(
-            'The number of parameter must be num_layers * (2 * n - 2)')
-
     j = 0
     for l in range(0, num_layers, 1):
         for i in range(0, n):
@@ -96,7 +59,7 @@ def create_stargraph_ansatz(qc: qiskit.QuantumCircuit, thetas: np.ndarray, num_l
     return qc
 
 
-def create_parameterized_polygongraph_ansatz(num_qubits: int = 3, num_layers: int = 1):
+def create_polygongraph_ansatz(num_qubits: int = 3, num_layers: int = 1):
     """Create graph ansatz
 
     Args:
@@ -134,51 +97,10 @@ def create_parameterized_polygongraph_ansatz(num_qubits: int = 3, num_layers: in
         qc.barrier()
     return qc
 
-
-def create_polygongraph_ansatz(qc: qiskit.QuantumCircuit, thetas: np.ndarray, num_layers: int):
-    """Create graph ansatz
-
-    Args:
-        - qc (qiskit.QuantumCircuit): init circuit
-        - thetas (np.ndarray): parameters
-
-    Returns:
-        - qiskit.QuantumCircuit: init circuit
-    """
-
+def create_hadamard_hypergraph_ansatz(num_qubits: int, num_layers: int):
+    qc = qiskit.QuantumCircuit(num_qubits, num_qubits)
+    thetas = qiskit.circuit.ParameterVector('theta', 3*num_qubits*num_layers)
     n = qc.num_qubits
-    if len(thetas) != num_layers*(2*n):
-        raise ValueError(
-            'The number of parameter must be num_layers*(2*n)')
-
-    j = 0
-    for _ in range(0, num_layers, 1):
-        for i in range(0, n):
-            qc.ry(thetas[j], i)
-            j += 1
-        for i in range(0, n - 1, 2):
-            qc.cz(i, i + 1)
-        if n % 2 == 1:
-            for i in range(0, n - 1):
-                qc.ry(thetas[j], i)
-                j += 1
-        else:
-            for i in range(0, n):
-                qc.ry(thetas[j], i)
-                j += 1
-        for i in range(1, n - 1, 2):
-            qc.cz(i, i + 1)
-        if n % 2 == 1:
-            qc.ry(thetas[j], n - 1)
-            j += 1
-        qc.cz(0, n - 1)
-        qc.barrier()
-    return qc
-def create_hadamard_hypergraph_ansatz(qc: qiskit.QuantumCircuit, thetas: np.ndarray, num_layers: int):
-    n = qc.num_qubits
-    if len(thetas) != num_layers*(3*n):
-        raise ValueError(
-            'The number of parameter must be num_layers*(3*n)')
     j = 0
     for i in range(0, n):
         qc.h(i)
@@ -202,11 +124,10 @@ def create_hadamard_hypergraph_ansatz(qc: qiskit.QuantumCircuit, thetas: np.ndar
         qc.ccz(0,1,2)
     return qc
 
-def create_hypergraph_ansatz(qc: qiskit.QuantumCircuit, thetas: np.ndarray, num_layers: int):
+def create_hypergraph_ansatz(num_qubits: int, num_layers: int):
+    qc = qiskit.QuantumCircuit(num_qubits, num_qubits)
+    thetas = qiskit.circuit.ParameterVector('theta', 3*num_qubits*num_layers)
     n = qc.num_qubits
-    if len(thetas) != num_layers*(3*n):
-        raise ValueError(
-            'The number of parameter must be num_layers*(3*n)')
     j = 0
     for _ in range(0, num_layers, 1):
         for i in range(0, n):
@@ -228,11 +149,10 @@ def create_hypergraph_ansatz(qc: qiskit.QuantumCircuit, thetas: np.ndarray, num_
         qc.ccz(0,1,2)
     return qc
 
-def create_hypergraph_layered_ansatz(qc: qiskit.QuantumCircuit, thetas: np.ndarray, num_layers: int):
+def create_hypergraph_layered_ansatz(num_qubits: int, num_layers: int):
+    qc = qiskit.QuantumCircuit(num_qubits, num_qubits)
+    thetas = qiskit.circuit.ParameterVector('theta', 6*num_qubits*num_layers)
     n = qc.num_qubits
-    if len(thetas) != num_layers*(6*n):
-        raise ValueError(
-            'The number of parameter must be num_layers*(3*n)')
     j = 0
     for _ in range(0, num_layers, 1):
         for i in range(0, n):
@@ -254,7 +174,7 @@ def create_hypergraph_layered_ansatz(qc: qiskit.QuantumCircuit, thetas: np.ndarr
         #qc.ccz(0,1,2)
         cnz = qiskit.circuit.library.MCMT('cz',n-1,1)
         qc.compose(cnz,qubits=list(range(0,n)),inplace=True)
-        qc = create_rz_nqubit(qc, thetas[j:j + n])
+        qc = create_rz_layer(num_qubits)
         j += n
         qc = create_rx_nqubit(qc, thetas[j:j + n])
         j += n
@@ -617,37 +537,8 @@ def u_cluster_nlayer_nqubit(qc: qiskit.QuantumCircuit, thetas: np.ndarray, num_l
     return qc
 
 
-def create_rx_nqubit(qc: qiskit.QuantumCircuit, thetas: np.ndarray):
-    """Add a R_X layer
 
-    Args:
-        - qc (qiskit.QuantumCircuit): init circuit
-        - thetas (np.ndarray): parameters
-
-    Returns:
-        - qiskit.QuantumCircuit
-    """
-    for i in range(0, qc.num_qubits):
-        qc.rx(thetas[i], i)
-    return qc
-
-
-def create_rz_nqubit(qc: qiskit.QuantumCircuit, thetas: np.ndarray):
-    """Add a R_Z layer
-
-    Args:
-        - qc (qiskit.QuantumCircuit): init circuit
-        - thetas (np.ndarray): parameters
-
-    Returns:
-        - qiskit.QuantumCircuit
-    """
-    for i in range(0, qc.num_qubits):
-        qc.rz(thetas[i], i)
-    return qc
-
-
-def create_cry_nqubit(qc: qiskit.QuantumCircuit, thetas: np.ndarray):
+def create_cry_layer(num_qubits, thetas: np.ndarray):
     """Create control Control-RY state
 
      Args:
@@ -657,6 +548,8 @@ def create_cry_nqubit(qc: qiskit.QuantumCircuit, thetas: np.ndarray):
     Returns:
         - qiskit.QuantumCircuit
     """
+    qc = qiskit.QuantumCircuit(num_qubits)
+    thetas = qiskit.circuit.ParameterVector('theta', num_qubits)
     for i in range(0, qc.num_qubits - 1, 2):
         qc.cry(thetas[i], i, i + 1)
     for i in range(1, qc.num_qubits - 1, 2):
@@ -707,7 +600,7 @@ def create_linear_ansatz(qc: qiskit.QuantumCircuit,
         qc = create_rx_nqubit(qc, phis[:n])
         qc = create_cry_nqubit_inverse(qc, phis[n:n * 2])
         qc = create_rz_nqubit(qc, phis[n * 2:n * 3])
-        qc = create_cry_nqubit(qc, phis[n * 3:n * 4])
+        qc = create_cry_layer(qc, phis[n * 3:n * 4])
         qc = create_rz_nqubit(qc, phis[n * 4:n * 5])
     return qc
 
@@ -1314,8 +1207,25 @@ def random_ccz_circuit(num_qubits, num_gates):
             qc.ccz(wires[0], wires[1], wires[2])
     return qc
 
-def ry_layer(num_qubits, num_layers, thetas):
+def create_rz_layer(num_qubits, num_layers = 1):
     """Adds a random number of CZ or CCZ gates (up to `max_gates`) to the given circuit."""
+    thetas = qiskit.circuit.ParameterVector('theta', num_qubits*num_layers)
+    qc = qiskit.QuantumCircuit(num_qubits, num_qubits)
+    for j in range(0, num_layers):
+        for i in range(num_qubits):
+            qc.rz(thetas[i+j*num_qubits], i)
+    return qc
+
+def create_rx_layer(num_qubits, num_layers = 1):
+    thetas = qiskit.circuit.ParameterVector('theta', num_qubits*num_layers)
+    qc = qiskit.QuantumCircuit(num_qubits, num_qubits)
+    for j in range(0, num_layers):
+        for i in range(num_qubits):
+            qc.rx(thetas[i+j*num_qubits], i)
+    return qc
+
+def create_ry_layer(num_qubits, num_layers = 1):
+    thetas = qiskit.circuit.ParameterVector('theta', num_qubits*num_layers)
     qc = qiskit.QuantumCircuit(num_qubits, num_qubits)
     for j in range(0, num_layers):
         for i in range(num_qubits):
