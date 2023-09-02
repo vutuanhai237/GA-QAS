@@ -15,7 +15,10 @@ from pennylane import numpy as np
 from qdas.utils import get_op_pool,set_op_pool
 import pennylane as qml 
 import tensorflow as tf
-from backends import get_backend
+from qdas.backends import get_backend
+import torch 
+import qiskit 
+import qtm 
 
 npdtype = np.complex64
 backend = get_backend("tensorflow")
@@ -26,46 +29,66 @@ def array_to_tensor(*num: np.array) -> Any:
         return l[0]
     return l
 
+def circuit(pnnp,preset,cset,old_circuit,rqiskit=False):
+    if rqiskit:
+        old_circuit(wires=[0,1,2])
+    else:
+        old_circuit(wires=[2,1,0])
 
-def GHZ_vag(gdata: Tensor,nnp: Tensor, preset: Sequence[int]
+    for i,j in enumerate(preset):
+        gate = cset[j]
+        if gate[0].startswith('R'):
+            if rqiskit:
+                getattr(qml,gate[0])(pnnp[i],3-1-gate[1])
+            else:
+                getattr(qml,gate[0])(pnnp[i],gate[1])
+        elif gate[0] == 'Hadamard':
+            if rqiskit:
+                getattr(qml,gate[0])(3-1-gate[1])
+            else:
+                getattr(qml,gate[0])(gate[1])
+        elif gate[0] == "CNOT":
+            if rqiskit:
+                qml.CNOT(wires=(3-1-gate[1],3 - 1- gate[2]))
+            else:
+                qml.CNOT(wires=(gate[1], gate[2]))
+        elif gate[0] == "Identity":
+            continue
+    if rqiskit:
+        return qml.expval(qml.PauliZ(0))
+    return  qml.state()
+    
+def GHZ_vag(old_circuit, gdata: Tensor,nnp: Tensor, preset: Sequence[int]
             , verbose: bool = False, n: int = 3) -> Tuple[Tensor, Tensor]:
     reference_state = np.zeros([2**n])
     reference_state[0] = 1 / np.sqrt(2)
     reference_state[-1] = 1 / np.sqrt(2)
-    reference_state = tf.constant(reference_state,dtype=tf.complex64)
+    
     nnp = nnp.numpy() 
     pnnp = [nnp[i,j] for i,j in enumerate(preset)]
-    pnnp = array_to_tensor(np.array(pnnp))
+    pnnp = np.array(pnnp)
     dev = qml.device("default.qubit", wires=n)
-    @qml.qnode(dev, interface="tf", diff_method="backprop")
-    def circuit(pnnp,preset,cset,n):
-        for i,j in enumerate(preset):
-            gate = cset[j]
-            if gate[0].startswith('R'):
-                getattr(qml,gate[0])(pnnp[i],gate[1])
-            elif gate[0] == 'Hadamard':
-                getattr(qml,gate[0])(gate[1])
-            elif gate[0] == "CNOT":
-                qml.CNOT(wires=(gate[1], gate[2]))
-            elif gate[0] == "Identity":
-                continue
-        return qml.state()
+    
     cset = get_op_pool()
-    with tf.GradientTape() as t:
-        t.watch(pnnp)
-        s = circuit(pnnp,preset,cset,n)
-        # print("predict state:",s)
-        s = tf.cast(s,dtype=tf.complex64)
-        loss = tf.math.reduce_sum(tf.math.abs(s - reference_state))
-    gr = t.gradient(loss, pnnp)
-    if gr is None:
-        gr = tf.zeros_like(pnnp)
-    gr = backend.real(gr)
-    gr = tf.where(tf.math.is_nan(gr), 0.0, gr)
+    pnnp = torch.tensor(pnnp)
+    pnnp.requires_grad_()
+    cir = qml.QNode(circuit, dev, interface="torch") 
+
+    s = cir(pnnp,preset,cset,old_circuit)
+    reference_state = torch.tensor(reference_state).clone().detach()
+    loss = torch.sum(torch.abs(s - reference_state))
+    try:
+        loss.backward()
+        gr = pnnp.grad
+    except:
+        gr = torch.zeros_like(pnnp)
+
+    # gr = backend.real(gr)
+    # gr = tf.where(tf.math.is_nan(gr), 0.0, gr)
     gmatrix = np.zeros_like(nnp)
     for i, j in enumerate(preset):
         gmatrix[i, j] = gr[i]
-    gmatrix = tf.constant(gmatrix)
+    gmatrix = torch.FloatTensor(gmatrix)
     return loss, gmatrix,circuit
     
 if __name__ == '__main__':

@@ -163,7 +163,7 @@ class QuantumCompilation():
             self.thetas = np.ones(len(self.u.parameters))
         self.is_trained = True
         self.thetass, self.loss_values = qtm.base.fit(self.u, self.vdagger, self.thetas, num_steps, self.loss_func, self.optimizer, verbose, is_return_all_thetas=True, **self.kwargs)
-        self.traces, self.fidelities, self.ce = qtm.utilities.calculate_state_preparation_metrics(self.u, self.vdagger, self.thetass, **self.kwargs)
+        # self.traces, self.fidelities, self.ce = qtm.utilities.calculate_state_preparation_metrics(self.u, self.vdagger, self.thetass, **self.kwargs)
         return
 
     def save(self, metric: str = "", text = "", path = './', save_all: bool = False,run_trial=0):

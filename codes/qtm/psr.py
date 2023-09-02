@@ -8,7 +8,6 @@ def single_2term_psr(qc: qiskit.QuantumCircuit, thetas: np.ndarray, i, **kwargs)
     thetas1, thetas2 = thetas.copy(), thetas.copy()
     thetas1[i] += qtm.constant.two_term_psr['s']
     thetas2[i] -= qtm.constant.two_term_psr['s']
-
     qc1 = qc.bind_parameters(thetas1)
     qc2 = qc.bind_parameters(thetas2)
     return -qtm.constant.two_term_psr['r'] * (
