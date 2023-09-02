@@ -57,6 +57,7 @@ def LQcompilation(ansatz):
             getattr(qc,ci[0].name)(ci[1][0]._index)
         elif ci[0].name.startswith("cx"):
             getattr(qc,ci[0].name)(ci[1][0]._index,ci[1][1]._index)
+
     compiler = qtm.qcompilation.QuantumCompilation(
         u = qc,
         vdagger = qtm.state.create_ghz_state(num_qubits).inverse(),
@@ -65,7 +66,22 @@ def LQcompilation(ansatz):
         thetas = np.array(parameters)
     )
     compiler.fit(num_steps = 100, verbose = 1)
-    return compiler.loss_values[-1], compiler.u.bind_parameters(compiler.thetas)
+    
+    i=0 
+
+    compiled_qc = QuantumCircuit(num_qubits)
+    for ci in compiler.u.data:
+        if ci[0].name.startswith("measure"):
+            continue
+        if ci[0].name.startswith("r"):
+            getattr(compiled_qc,ci[0].name)(compiler.thetas[i],ci[1][0]._index)
+            i+=1
+        elif ci[0].name.startswith("h"):
+            getattr(compiled_qc,ci[0].name)(ci[1][0]._index)
+        elif ci[0].name.startswith("cx"):
+            getattr(compiled_qc,ci[0].name)(ci[1][0]._index,ci[1][1]._index)
+
+    return compiler.loss_values[-1], compiled_qc
 
 def reward_function(curr_objective_value,prev_objective_value,minimum_objective_value,step,max_layer,epsilon=1e-5):
     if curr_objective_value < epsilon:
