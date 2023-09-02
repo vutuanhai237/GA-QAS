@@ -28,8 +28,12 @@ def measure(qc: qiskit.QuantumCircuit, qubits, cbits=[]):
     n = len(qubits)
     if cbits == []:
         cbits = qubits.copy()
+    if qc.num_clbits == 0:
+        cr = qiskit.ClassicalRegister(qc.num_qubits, 'c')
+        qc.add_register(cr)
     for i in range(0, n):
         qc.measure(qubits[i], cbits[i])
+    # qc.measure_all() # 
     if qtm.constant.noise_prob > 0:
         noise_model = qtm.noise.generate_noise_model(
             n, qtm.constant.noise_prob)
@@ -280,6 +284,8 @@ def fit_state_preparation(u: types.FunctionType,
             thetas = optimizer(thetas, grad_loss)
         
         qc_binded = uvaddager.bind_parameters(thetas)
+        if i == 0:
+            qc_binded.draw('mpl', filename ='a.png')
         loss = loss_func(
             qtm.base.measure(qc_binded, list(range(n))))
         loss_values.append(loss)
@@ -315,13 +321,3 @@ def fit(u: typing.Union[qiskit.QuantumCircuit, types.FunctionType], v: typing.Un
                                  verbose=verbose,
                                  is_return_all_thetas=is_return_all_thetas,
                                  **kwargs)
-    # else:
-    #     return fit_state_tomography(u=u,
-    #                                 create_vdagger_func=v,
-    #                                 thetas=thetas,
-    #                                 num_steps=num_steps,
-    #                                 loss_func=loss_func,
-    #                                 optimizer=optimizer,
-    #                                 verbose=verbose,
-    #                                 is_return_all_thetas=is_return_all_thetas,
-    #                                 **kwargs)

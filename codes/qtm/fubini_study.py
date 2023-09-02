@@ -204,7 +204,7 @@ def add_layer_into_circuit(qc: qiskit.QuantumCircuit, layer: typing.List):
 
 def qng_hessian(uvdagger: qiskit.QuantumCircuit, thetas: np.ndarray):
     alpha = 0.01
-    n = u.num_qubits
+    n = uvdagger.num_qubits
     length = thetas.shape[0]
     thetas_origin = thetas
 

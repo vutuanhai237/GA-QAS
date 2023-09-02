@@ -118,13 +118,46 @@ look_up_operator = {
 
 
 
+H_gate = {'name': 'h', 'operation': HGate, 'num_op': 1, 'num_params': 0}
+S_gate = {'name': 's', 'operation': SGate, 'num_op': 1, 'num_params': 0}
+CX_gate = {'name': 'cx', 'operation': CXGate, 'num_op': 2, 'num_params': 0}
+RX_gate = {'name': 'rx', 'operation': RXGate, 'num_op': 1, 'num_params': 1}
+RY_gate = {'name': 'ry', 'operation': RYGate, 'num_op': 1, 'num_params': 1}
+RZ_gate = {'name': 'rz', 'operation': RZGate, 'num_op': 1, 'num_params': 1}
+U2_gate = {'name': 'u2', 'operation': U2Gate, 'num_op': 1, 'num_params': 2}
+U3_gate = {'name': 'u3', 'operation': U3Gate, 'num_op': 1, 'num_params': 3}
+
+clifford_set = [
+    H_gate,
+    CX_gate,
+    S_gate
+    
+]
+
+
+operations = [
+    H_gate,
+    S_gate,
+    CX_gate,
+    RX_gate,
+    RY_gate,
+    RZ_gate,
+    U2_gate,
+    U3_gate
+]
+
+
+
+one_q_ops_name = ['h','rx','ry','rz', 'cx']
 one_q_ops = [HGate, RXGate, RYGate, RZGate]
-
+one_param_name = ['rx','ry','rz']
 one_param = [RXGate, RYGate, RZGate]
+two_param_name = ['u2']
 two_param = [U2Gate]
-three_param = [U3Gate]
-
 two_q_ops = [CXGate]
+three_param_name = ['u3']
+three_param = [U3Gate]
+three_q_ops_name = ['ccx']
 three_q_ops = [CCXGate]
 
 # one_q_ops = [IGate, U1Gate, U2Gate, U3Gate, XGate, YGate, ZGate, HGate, SGate, SdgGate, TGate, TdgGate, RXGate, RYGate, RZGate]

@@ -1,8 +1,11 @@
+import typing
 import qiskit
 import random
 import qtm.ansatz
 import numpy as np
-import random_circuit
+import qtm.random_circuit
+
+
 def divide_circuit(qc: qiskit.QuantumCircuit, percent) -> qiskit.QuantumCircuit:
     qc1 = qiskit.QuantumCircuit(qc.num_qubits)
     qc2 = qc1.copy()
@@ -16,18 +19,22 @@ def divide_circuit(qc: qiskit.QuantumCircuit, percent) -> qiskit.QuantumCircuit:
             return qc1, qc2
     return qc1, qc2
 
+
 def divide_circuit_by_depth(qc: qiskit.QuantumCircuit, depth) -> qiskit.QuantumCircuit:
+    def look_forward(qc, x):
+        return qc.append(x[0],x[1])
     qc1 = qiskit.QuantumCircuit(qc.num_qubits)
     qc2 = qc1.copy()
     stop = 0
-    for x in qc:
-        qc1.append(x[0], x[1])
+    for i in range(len(qc)):
+        qc1.append(qc[i][0], qc[i][1])
         stop += 1
-        if qc1.depth() == depth:
+        if qc1.depth() == depth and i + 1 < len(qc) and look_forward(qc1, qc[i+1]) == depth + 1 :
             for x in qc[stop:]:
                 qc2.append(x[0], x[1])
             return qc1, qc2
     return qc1, qc2
+
 
 def fight(population):
     individuals = random.sample(population, 2)
@@ -43,8 +50,6 @@ def random_mutate(population, prob, mutate_func):
         population[random_individual_index].mutate(mutate_func)
     return population
 
-import qtm.ansatz
-import typing
 
 def compose_circuit(qcs: typing.List[qiskit.QuantumCircuit]) -> qiskit.QuantumCircuit:
     """_summary_
@@ -70,25 +75,22 @@ def compose_circuit(qcs: typing.List[qiskit.QuantumCircuit]) -> qiskit.QuantumCi
                 instruction[0].params[0] = thetas[i:i+1]
                 i += 2
             qc.append(instruction[0], instruction[1])
-           
-    return qc
-def mutate_genome(num_qubits: int): 
-    genome_set = [
-        # qtm.ansatz.create_rx_layer(num_qubits), 
-        # qtm.ansatz.create_ry_layer(num_qubits), 
-        # qtm.ansatz.create_rz_layer(num_qubits), 
-        random_circuit.random_circuit(num_qubits, 1)
-    ]
 
-    return random.choice(genome_set)
-def mutate(qc: qiskit.QuantumCircuit, is_truncate = True):
+    return qc
+
+
+
+
+
+def mutate(qc: qiskit.QuantumCircuit, pool, is_truncate=True):
     point = random.random()
     qc1, qc2 = qtm.evolution.divide_circuit(qc, point)
     qc1.barrier()
     qc21, qc22 = qtm.evolution.divide_circuit_by_depth(qc2, 1)
-    genome = mutate_genome(qc.num_qubits)
+    genome = qtm.random_circuit.random_circuit2(qc.num_qubits, 1, pool)
     new_qc = compose_circuit([qc1, genome, qc22])
     if is_truncate:
         if new_qc.depth() > qc.depth():
-            new_qc, _ = qtm.evolution.divide_circuit_by_depth(new_qc, qc.depth())
+            new_qc, _ = qtm.evolution.divide_circuit_by_depth(
+                new_qc, qc.depth())
     return new_qc

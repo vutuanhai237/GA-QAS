@@ -158,8 +158,10 @@ def calculate_state_preparation_metrics(u: qiskit.QuantumCircuit, vdagger: qiski
     n = vdagger.num_qubits
     for thetas in thetass:
         # Target state
-        rho = qiskit.quantum_info.DensityMatrix.from_instruction(
-            vdagger.inverse())
+        # psi = qiskit.quantum_info.Statevector.from_instruction(vdagger).conjugate()
+        # rho = qiskit.quantum_info.DensityMatrix(psi)
+        
+        rho = qiskit.quantum_info.DensityMatrix.from_instruction(vdagger)
         # Preparation state
         qc = u.bind_parameters(thetas)
         sigma = qiskit.quantum_info.DensityMatrix.from_instruction(qc)

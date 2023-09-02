@@ -176,292 +176,11 @@ def create_hypergraph_layered_ansatz(num_qubits: int, num_layers: int):
         qc.compose(cnz,qubits=list(range(0,n)),inplace=True)
         qc = create_rz_layer(num_qubits)
         j += n
-        qc = create_rx_nqubit(qc, thetas[j:j + n])
+        qc = create_rx_layer(qc, thetas[j:j + n])
         j += n
-        qc = create_rz_nqubit(qc, thetas[j:j + n])
+        qc = create_rz_layer(qc, thetas[j:j + n])
         j += n
     return qc
-# def create_GHZchecker_graph(qc: qiskit.QuantumCircuit, thetas: np.ndarray, theta: float):
-#     """Create circuit includes linear and GHZ
-
-#     Args:
-#         - qc (qiskit.QuantumCircuit): init circuit
-#         - thetas (np.ndarray): parameters
-#         - num_layers (int)
-#         - theta (float): param for general GHZ
-
-#     Returns:
-#         - qiskit.QuantumCircuit
-#     """
-
-#     if isinstance(theta, float) != True:
-#         theta = theta['theta']
-#     # |psi_gen> = U_gen|000...>
-#     qc = create_graph_ansatz(qc, thetas)
-#     # U_target^t|psi_gen> with U_target is GHZ state
-#     qc = qtm.state.create_ghz_state_inverse(qc, theta)
-#     return qc
-
-
-# def create_GHZchecker_polygongraph(qc: qiskit.QuantumCircuit, thetas: np.ndarray, num_layers: int, theta: float):
-#     """Create circuit includes linear and GHZ
-
-#     Args:
-#         - qc (qiskit.QuantumCircuit): init circuit
-#         - thetas (np.ndarray): parameters
-#         - num_layers (int)
-#         - theta (float): param for general GHZ
-
-#     Returns:
-#         - qiskit.QuantumCircuit
-#     """
-#     if isinstance(num_layers, int) != True:
-#         num_layers = num_layers['num_layers']
-
-#     if isinstance(theta, float) != True:
-#         theta = theta['theta']
-#     # |psi_gen> = U_gen|000...>
-#     qc = create_polygongraph_ansatz(qc, thetas, num_layers)
-#     # U_target^t|psi_gen> with U_target is GHZ state
-#     qc = qtm.state.create_ghz_state_inverse(qc, theta)
-#     return qc
-
-
-# def create_GHZchecker_star2graph(qc: qiskit.QuantumCircuit, thetas: np.ndarray, num_layers: int, theta: float):
-#     """Create circuit includes linear and GHZ
-
-#     Args:
-#         - qc (qiskit.QuantumCircuit): init circuit
-#         - thetas (np.ndarray): parameters
-#         - num_layers (int)
-#         - theta (float): param for general GHZ
-
-#     Returns:
-#         - qiskit.QuantumCircuit
-#     """
-#     if isinstance(num_layers, int) != True:
-#         num_layers = num_layers['num_layers']
-
-#     if isinstance(theta, float) != True:
-#         theta = theta['theta']
-#     qc = create_stargraph_ansatz(qc, thetas, num_layers)
-#     qc = qtm.state.create_ghz_state_inverse(qc, theta)
-#     return qc
-
-
-# def create_GHZchecker_linear(qc: qiskit.QuantumCircuit, thetas: np.ndarray,
-#                              num_layers: int, theta: float):
-#     """Create circuit includes linear and GHZ
-
-#     Args:
-#         - qc (qiskit.QuantumCircuit): init circuit
-#         - thetas (np.ndarray): parameters
-#         - num_layers (int)
-#         - theta (float): param for general GHZ
-
-#     Returns:
-#         - qiskit.QuantumCircuit
-#     """
-#     if isinstance(num_layers, int) != True:
-#         num_layers = num_layers['num_layers']
-#     if isinstance(theta, float) != True:
-#         theta = theta['theta']
-#     # |psi_gen> = U_gen|000...>
-#     qc = create_linear_ansatz(qc, thetas, num_layers=num_layers)
-#     # U_target^t|psi_gen> with U_target is GHZ state
-#     qc = qtm.state.create_ghz_state_inverse(qc, theta)
-#     return qc
-
-
-# def create_GHZchecker_binho(qc: qiskit.QuantumCircuit, thetas: np.ndarray,
-#                             num_layers: int, theta: float):
-#     """Create circuit includes binho and GHZ
-
-#     Args:
-#         - qc (qiskit.QuantumCircuit): init circuit
-#         - thetas (np.ndarray): parameters
-#         - num_layers (int)
-#         - theta (float): param for general GHZ
-
-#     Returns:
-#         - qiskit.QuantumCircuit
-#     """
-#     if isinstance(num_layers, int) != True:
-#         num_layers = num_layers['num_layers']
-#     if isinstance(theta, float) != True:
-#         theta = theta['theta']
-#     # |psi_gen> = U_gen|000...>
-#     qc = create_binho_ansatz(qc, thetas, num_layers=num_layers)
-#     # U_target^t|psi_gen> with U_target is GHZ state
-#     qc = qtm.state.create_ghz_state_inverse(qc, theta)
-#     return qc
-
-
-# def create_GHZchecker_alternating_layered(qc: qiskit.QuantumCircuit,
-#                                           thetas: np.ndarray, num_layers: int,
-#                                           theta: float):
-#     """Create circuit includes alternating layered and GHZ
-
-#     Args:
-#         - qc (qiskit.QuantumCircuit): init circuit
-#         - thetas (np.ndarray): parameters
-#         - num_layers (int)
-#         - theta (float): param for general GHZ
-
-#     Returns:
-#         - qiskit.QuantumCircuit
-#     """
-#     if isinstance(num_layers, int) != True:
-#         num_layers = num_layers['num_layers']
-#     if isinstance(theta, float) != True:
-#         theta = theta['theta']
-#     # |psi_gen> = U_gen|000...>
-#     qc = create_alternating_layered_ansatz(qc, thetas, num_layers=num_layers)
-#     # U_target^t|psi_gen> with U_target is GHZ state
-#     qc = qtm.state.create_ghz_state_inverse(qc, theta)
-#     return qc
-
-
-###########################
-######### W State #########
-###########################
-
-
-
-# def create_Wchecker_polygongraph(qc: qiskit.QuantumCircuit, thetas: np.ndarray,
-#                                  num_layers: int):
-#     """Create circuit includes linear and W
-
-#     Args:
-#         - qc (qiskit.QuantumCircuit): init circuit
-#         - thetas (np.ndarray): parameters
-#         - num_layers (int)
-#         - theta (float): param for general W
-
-#     Returns:
-#         - qiskit.QuantumCircuit
-#     """
-#     if isinstance(num_layers, int) != True:
-#         num_layers = num_layers['num_layers']
-
-#     # |psi_gen> = U_gen|000...>
-#     qc = create_polygongraph_ansatz(qc, thetas, num_layers)
-#     # U_target^t|psi_gen> with U_target is W state
-#     qc = qtm.state.create_w_state_inverse(qc)
-#     return qc
-
-
-# def create_Wchecker_star2graph(qc: qiskit.QuantumCircuit, thetas: np.ndarray,
-#                                num_layers: int):
-#     """Create circuit includes linear and W
-
-#     Args:
-#         - qc (qiskit.QuantumCircuit): init circuit
-#         - thetas (np.ndarray): parameters
-#         - num_layers (int)
-#         - theta (float): param for general W
-
-#     Returns:
-#         - qiskit.QuantumCircuit
-#     """
-#     if isinstance(num_layers, int) != True:
-#         num_layers = num_layers['num_layers']
-
-#     # |psi_gen> = U_gen|000...>
-#     qc = create_stargraph_ansatz(qc, thetas, num_layers)
-#     # U_target^t|psi_gen> with U_target is W state
-#     qc = qtm.state.create_w_state_inverse(qc)
-#     return qc
-
-
-# def create_Wchecker_graph(qc: qiskit.QuantumCircuit, thetas: np.ndarray):
-#     """Create circuit includes linear and GHZ
-
-#     Args:
-#         - qc (qiskit.QuantumCircuit): init circuit
-#         - thetas (np.ndarray): parameters
-#         - num_layers (int)
-#         - theta (float): param for general GHZ
-
-#     Returns:
-#         - qiskit.QuantumCircuit
-#     """
-
-#     # |psi_gen> = U_gen|000...>
-#     qc = create_graph_ansatz(qc, thetas)
-#     # U_target^t|psi_gen> with U_target is GHZ state
-#     qc = qtm.state.create_w_state_inverse(qc)
-#     return qc
-
-
-# def create_Wchecker_linear(qc: qiskit.QuantumCircuit, thetas: np.ndarray,
-#                            num_layers: int):
-#     """Create circuit includes linear and W
-
-#     Args:
-#         - qc (qiskit.QuantumCircuit): init circuit
-#         - thetas (np.ndarray): parameters
-#         - num_layers (int)
-#         - theta (float): param for general W
-
-#     Returns:
-#         - qiskit.QuantumCircuit
-#     """
-#     if isinstance(num_layers, int) != True:
-#         num_layers = num_layers['num_layers']
-
-#     # |psi_gen> = U_gen|000...>
-#     qc = create_linear_ansatz(qc, thetas, num_layers=num_layers)
-#     # U_target^t|psi_gen> with U_target is W state
-#     qc = qtm.state.create_w_state_inverse(qc)
-#     return qc
-
-
-# def create_Wchecker_binho(qc: qiskit.QuantumCircuit, thetas: np.ndarray,
-#                           num_layers: int):
-#     """Create circuit includes binho and W
-
-#     Args:
-#         - qc (qiskit.QuantumCircuit): init circuit
-#         - thetas (np.ndarray): parameters
-#         - num_layers (int)
-#         - theta (float): param for general W
-
-#     Returns:
-#         - qiskit.QuantumCircuit
-#     """
-#     if isinstance(num_layers, int) != True:
-#         num_layers = num_layers['num_layers']
-
-#     # |psi_gen> = U_gen|000...>
-#     qc = create_binho_ansatz(qc, thetas, num_layers=num_layers)
-#     # U_target^t|psi_gen> with U_target is W state
-#     qc = qtm.state.create_w_state_inverse(qc)
-#     return qc
-
-
-# def create_Wchecker_alternating_layered(qc: qiskit.QuantumCircuit,
-#                                         thetas: np.ndarray, num_layers: int):
-#     """Create circuit includes Alternating layered and W
-
-#     Args:
-#         - qc (qiskit.QuantumCircuit): init circuit
-#         - thetas (np.ndarray): parameters
-#         - num_layers (int)
-#         - theta (float): param for general W
-
-#     Returns:
-#         - qiskit.QuantumCircuit
-#     """
-#     if isinstance(num_layers, int) != True:
-#         num_layers = num_layers['num_layers']
-
-#     # |psi_gen> = U_gen|000...>
-#     qc = create_alternating_layered_ansatz(qc, thetas, num_layers=num_layers)
-#     # U_target^t|psi_gen> with U_target is W state
-#     qc = qtm.state.create_w_state_inverse(qc)
-#     return qc
-
 
 ###########################
 ######## Haar State #######
@@ -576,8 +295,7 @@ def create_cry_nqubit_inverse(qc: qiskit.QuantumCircuit, thetas: np.ndarray):
     return qc
 
 
-def create_linear_ansatz(qc: qiskit.QuantumCircuit,
-                        thetas: np.ndarray,
+def create_linear_ansatz(num_qubits: int,
                         num_layers: int = 1):
     """Create linear ansatz. The number of param is num_layers * n * 5
 
@@ -589,122 +307,19 @@ def create_linear_ansatz(qc: qiskit.QuantumCircuit,
     Returns:
         - qiskit.QuantumCircuit
     """
+    qc = qiskit.QuantumCircuit(num_qubits, num_qubits)
+    thetas = qiskit.circuit.ParameterVector('theta', 5*num_qubits*num_layers)
     n = qc.num_qubits
-    if isinstance(num_layers, int) != True:
-        num_layers = (num_layers['num_layers'])
-    if len(thetas) != num_layers * n * 5:
-        raise Exception(
-            'Number of parameters must be equal n_layers * num_qubits * 5')
     for i in range(0, num_layers):
         phis = thetas[i * n * 5:(i + 1) * n * 5]
-        qc = create_rx_nqubit(qc, phis[:n])
+        qc = create_rx_layer(qc, phis[:n])
         qc = create_cry_nqubit_inverse(qc, phis[n:n * 2])
-        qc = create_rz_nqubit(qc, phis[n * 2:n * 3])
+        qc = create_rz_layer(qc, phis[n * 2:n * 3])
         qc = create_cry_layer(qc, phis[n * 3:n * 4])
-        qc = create_rz_nqubit(qc, phis[n * 4:n * 5])
+        qc = create_rz_layer(qc, phis[n * 4:n * 5])
     return qc
 
-
-def create_haarchecker_linear(qc: qiskit.QuantumCircuit, thetas: np.ndarray,
-                              num_layers: int, encoder):
-    """Create circuit includes haar and linear
-
-    Args:
-        - qc (qiskit.QuantumCircuit): init circuit
-        - thetas (np.ndarray): parameters
-        - num_layers (int): num_layers for linear
-        - encoder: encoder for haar
-
-    Returns:
-        - qiskit.QuantumCircuit
-    """
-    if isinstance(num_layers, int) != True:
-        num_layers = num_layers['num_layers']
-    if isinstance(encoder, qtm.encoding.Encoding) != True:
-        encoder = encoder['encoder']
-    qc1 = qiskit.QuantumCircuit(encoder.quantum_data)
-    qc1 = create_linear_ansatz(qc1, thetas, num_layers=num_layers)
-    qc1 = qc1.combine(qc.inverse())
-    qc1.add_register(qiskit.ClassicalRegister(encoder.num_qubits))
-    return qc1
-
-
-def create_haarchecker_graph(qc: qiskit.QuantumCircuit, thetas: np.ndarray, encoder):
-    """Create circuit includes haar and linear
-
-    Args:
-        - qc (qiskit.QuantumCircuit): init circuit
-        - thetas (np.ndarray): parameters
-        - num_layers (int): num_layers for linear
-        - encoder: encoder for haar
-
-    Returns:
-        - qiskit.QuantumCircuit
-    """
-    if isinstance(encoder, qtm.encoding.Encoding) != True:
-        encoder = encoder['encoder']
-    qc1 = qiskit.QuantumCircuit(encoder.quantum_data)
-    qc1 = create_graph_ansatz(qc1, thetas)
-    qc1 = qc1.combine(qc.inverse())
-    qc1.add_register(qiskit.ClassicalRegister(encoder.num_qubits))
-    return qc1
-
-
-def create_haarchecker_binho(qc: qiskit.QuantumCircuit, thetas: np.ndarray,
-                             num_layers: int, encoder):
-    """Create circuit includes haar and linear
-
-    Args:
-        - qc (qiskit.QuantumCircuit): init circuit
-        - thetas (np.ndarray): parameters
-        - num_layers (int): num_layers for linear
-        - encoder: encoder for haar
-
-    Returns:
-        - qiskit.QuantumCircuit
-    """
-    if isinstance(num_layers, int) != True:
-        num_layers = num_layers['num_layers']
-    if isinstance(encoder, qtm.encoding.Encoding) != True:
-        encoder = encoder['encoder']
-    qc1 = qiskit.QuantumCircuit(encoder.quantum_data)
-    qc1 = create_binho_ansatz(qc1, thetas, num_layers=num_layers)
-    qc1 = qc1.combine(qc.inverse())
-    qc1.add_register(qiskit.ClassicalRegister(encoder.num_qubits))
-    return qc1
-
-
-def create_haarchecker_alternating_layered(qc: qiskit.QuantumCircuit,
-                                           thetas: np.ndarray, num_layers: int,
-                                           encoder):
-    """Create circuit includes Alternating layered and linear
-
-    Args:
-        - qc (qiskit.QuantumCircuit): init circuit
-        - thetas (np.ndarray): parameters
-        - num_layers (int): num_layers for linear
-        - encoder: encoder for haar
-
-    Returns:
-        - qiskit.QuantumCircuit
-    """
-    if isinstance(num_layers, int) != True:
-        num_layers = num_layers['num_layers']
-    if isinstance(encoder, qtm.encoding.Encoding) != True:
-        encoder = encoder['encoder']
-    qc1 = qiskit.QuantumCircuit(encoder.quantum_data)
-    qc1 = create_alternating_layered_ansatz(qc1, thetas, num_layers=num_layers)
-    qc1 = qc1.combine(qc.inverse())
-    qc1.add_register(qiskit.ClassicalRegister(encoder.num_qubits))
-    return qc1
-
-
-###########################
-######## Binho State ######
-###########################
-
-
-def create_wy_ansatz_ansatz(qc: qiskit.QuantumCircuit, thetas: np.ndarray):
+def create_wy_layer(num_qubits: int):
     """Create WY state
 
      Args:
@@ -714,11 +329,14 @@ def create_wy_ansatz_ansatz(qc: qiskit.QuantumCircuit, thetas: np.ndarray):
     Returns:
         - qiskit.QuantumCircuit
     """
-    for i in range(0, qc.num_qubits - 1, 2):
+    qc = qiskit.QuantumCircuit(num_qubits, num_qubits)
+    thetas = qiskit.circuit.ParameterVector('theta', (num_qubits + 1))
+    n = qc.num_qubits
+    for i in range(0, n - 1, 2):
         qc.cry(thetas[i], i + 1, i)
-    for i in range(1, qc.num_qubits - 1, 2):
+    for i in range(1, n - 1, 2):
         qc.cry(thetas[i], i + 1, i)
-    qc.cry(thetas[qc.num_qubits - 1], 0, qc.num_qubits - 1)
+    qc.cry(thetas[n - 1], 0, n - 1)
     return qc
 
 
@@ -741,11 +359,11 @@ def create_binho_ansatz(qc: qiskit.QuantumCircuit, thetas: np.ndarray, num_layer
             'Number of parameters must be equal n_layers * num_qubits * 5')
     for i in range(0, num_layers):
         phis = thetas[i * n * 5:(i + 1) * n * 5]
-        qc = create_rx_nqubit(qc, phis[:n])
-        qc = create_wy_ansatz(qc, phis[n:n * 2])
-        qc = create_rz_nqubit(qc, phis[n * 2:n * 3])
-        qc = create_wy_ansatz(qc, phis[n * 3:n * 4])
-        qc = create_rz_nqubit(qc, phis[n * 4:n * 5])
+        qc = create_rx_layer(qc, phis[:n])
+        qc = create_wy_layer(qc, phis[n:n * 2])
+        qc = create_rz_layer(qc, phis[n * 2:n * 3])
+        qc = create_wy_layer(qc, phis[n * 3:n * 4])
+        qc = create_rz_layer(qc, phis[n * 4:n * 5])
     return qc
 
 
@@ -826,7 +444,7 @@ def create_alternating_layered_ansatz(qc: qiskit.QuantumCircuit,
 ###########################
 
 
-def create_Wchain(qc: qiskit.QuantumCircuit, thetas: np.ndarray):
+def create_Wchain(num_qubits: int, thetas: np.ndarray):
     """Create W_chain ansatz
 
     Args:
@@ -836,28 +454,15 @@ def create_Wchain(qc: qiskit.QuantumCircuit, thetas: np.ndarray):
     Returns:
         - qiskit.QuantumCircuit
     """
-    for i in range(0, qc.num_qubits - 1):
+    qc = qiskit.QuantumCircuit(num_qubits, num_qubits)
+    n = qc.num_qubits
+    for i in range(0, n - 1):
         qc.cry(thetas[i], i, i + 1)
-    qc.cry(thetas[-1], qc.num_qubits - 1, 0)
+    qc.cry(thetas[-1], n - 1, 0)
     return qc
 
 
-def create_WchainCNOT(qc: qiskit.QuantumCircuit):
-    """Create W_chain ansatz but replacing CRY gate by CNOT gate
-
-    Args:
-        - qc (qiskit.QuantumCircuit): init circuit
-
-    Returns:
-        - qiskit.QuantumCircuit
-    """
-    for i in range(0, qc.num_qubits - 1):
-        qc.cnot(i, i + 1)
-    qc.cnot(qc.num_qubits - 1, 0)
-    return qc
-
-
-def create_Walternating(qc: qiskit.QuantumCircuit, thetas: np.ndarray, index_layer):
+def create_Walternating(num_qubits: int, thetas: np.ndarray, index_layer):
     """Create W_alternating ansatz
 
     Args:
@@ -867,6 +472,8 @@ def create_Walternating(qc: qiskit.QuantumCircuit, thetas: np.ndarray, index_lay
     Returns:
         - qiskit.QuantumCircuit
     """
+    qc = qiskit.QuantumCircuit(num_qubits, num_qubits)
+    n = qc.num_qubits
     t = 0
     if index_layer % 2 == 0:
         # Even
@@ -948,64 +555,29 @@ def create_WalltoallCNOT(qc: qiskit.QuantumCircuit, limit=0):
     return qc
 
 
-def create_Wchain_layered_ansatz(qc: qiskit.QuantumCircuit,
-                               thetas: np.ndarray,
-                               num_layers: int = 1):
-    """Create Alternating layered ansatz
+def create_Wchain_layered_ansatz(num_qubits, num_layers: int = 1):
+    """_summary_
 
     Args:
-        - qc (qiskit.QuantumCircuit): init circuit
-        - thetas (np.ndarray): parameters
-        - n_layers (int): numpy of layers
+        num_qubits (_type_): _description_
+        num_layers (int, optional): _description_. Defaults to 1.
 
     Returns:
-        - qiskit.QuantumCircuit
+        _type_: _description_
     """
+    qc = qiskit.QuantumCircuit(num_qubits, num_qubits)
+    thetas = qiskit.circuit.ParameterVector('theta', 4 * num_qubits * num_layers)
     n = qc.num_qubits
-    if isinstance(num_layers, int) != True:
-        num_layers = (num_layers['num_layers'])
-
-    if len(thetas) != num_layers * (n * 4):
-        raise Exception(
-            'Number of parameters must be equal n_layers * num_qubits * 4')
     for i in range(0, num_layers):
         phis = thetas[i * (n * 4):(i + 1) * (n * 4)]
-        qc = create_Wchain(qc, phis[:n])
-        qc.barrier()
-        qc = create_rz_nqubit(qc, phis[n:n * 2])
-        qc = create_rx_nqubit(qc, phis[n * 2:n * 3])
-        qc = create_rz_nqubit(qc, phis[n * 3:n * 4])
+        qc = qc.compose(create_Wchain(num_qubits, phis[:n]))
+        qc = qc.compose(create_rz_layer(num_qubits, phis[n:n * 2]))
+        qc = qc.compose(create_rx_layer(num_qubits, phis[n * 2:n * 3]))
+        qc = qc.compose(create_rz_layer(num_qubits, phis[n * 3:n * 4]))
     return qc
 
 
-def create_WchainCNOT_layered_ansatz(qc: qiskit.QuantumCircuit,
-                                   thetas: np.ndarray,
-                                   num_layers: int = 1):
-    """Create WchainCNOT layered ansatz
 
-    Args:
-        - qc (qiskit.QuantumCircuit): init circuit
-        - thetas (np.ndarray): parameters
-        - n_layers (Int): numpy of layers
-
-    Returns:
-        - qiskit.QuantumCircuit
-    """
-    n = qc.num_qubits
-    if isinstance(num_layers, int) != True:
-        num_layers = (num_layers['num_layers'])
-
-    if len(thetas) != num_layers * (n * 3):
-        raise Exception(
-            'Number of parameters must be equal n_layers * num_qubits * 3')
-    for i in range(0, num_layers):
-        phis = thetas[i * (n * 3):(i + 1) * (n * 3)]
-        qc = create_WchainCNOT(qc)
-        qc.barrier()
-        qc = create_rz_nqubit(qc, phis[:n])
-        qc = create_rx_nqubit(qc, phis[n:n * 2])
-        qc = create_rz_nqubit(qc, phis[n * 2:n * 3])
-    return qc
 
 
 def calculate_n_walternating(index_layers, num_qubits):
@@ -1041,10 +613,10 @@ def create_Walternating_layered_ansatz(qc: qiskit.QuantumCircuit,
         n_param += n_alternating + 3 * n
         qc = create_Walternating(qc, phis[:n_alternating], i + 1)
         qc.barrier()
-        qc = create_rz_nqubit(qc, phis[n_alternating:n_alternating + n])
-        qc = create_rx_nqubit(
+        qc = create_rz_layer(qc, phis[n_alternating:n_alternating + n])
+        qc = create_rx_layer(
             qc, phis[n_alternating + n:n_alternating + n * 2])
-        qc = create_rz_nqubit(
+        qc = create_rz_layer(
             qc, phis[n_alternating + n * 2:n_alternating + n * 3])
     return qc
 
@@ -1070,9 +642,9 @@ def create_WalternatingCNOT_layered_ansatz(qc: qiskit.QuantumCircuit,
         phis = thetas[i * (n * 3):(i + 1) * (n * 3)]
         qc = create_WalternatingCNOT(qc, i + 1)
         qc.barrier()
-        qc = create_rz_nqubit(qc, phis[:n])
-        qc = create_rx_nqubit(qc, phis[n: n * 2])
-        qc = create_rz_nqubit(qc, phis[n * 2: n * 3])
+        qc = create_rz_layer(qc, phis[:n])
+        qc = create_rx_layer(qc, phis[n: n * 2])
+        qc = create_rz_layer(qc, phis[n * 2: n * 3])
     return qc
 
 
@@ -1111,11 +683,11 @@ def create_Walltoall_layered_ansatz(qc: qiskit.QuantumCircuit,
                       (i + 1) * n_walltoall]
         qc = create_Walltoall(qc, phis[0:n_walltoall], limit=limit)
         qc.barrier()
-        qc = create_rz_nqubit(qc, phis[n_walltoall:n_walltoall + n])
+        qc = create_rz_layer(qc, phis[n_walltoall:n_walltoall + n])
         qc.barrier()
-        qc = create_rx_nqubit(qc, phis[n_walltoall + n:n_walltoall + n * 2])
+        qc = create_rx_layer(qc, phis[n_walltoall + n:n_walltoall + n * 2])
         qc.barrier()
-        qc = create_rz_nqubit(qc,
+        qc = create_rz_layer(qc,
                               phis[n_walltoall + n * 2:n_walltoall + n * 3])
         qc.barrier()
     return qc
@@ -1142,55 +714,10 @@ def create_WalltoallCNOT_layered_ansatz(qc: qiskit.QuantumCircuit,
         phis = thetas[i * (3 * n):(i + 1) * (3 * n)]
         qc = create_WalltoallCNOT(qc, limit=limit)
         qc.barrier()
-        qc = create_rz_nqubit(qc, phis[: n])
-        qc = create_rx_nqubit(qc, phis[n: n * 2])
-        qc = create_rz_nqubit(qc, phis[n * 2: n * 3])
+        qc = create_rz_layer(qc, phis[: n])
+        qc = create_rx_layer(qc, phis[n: n * 2])
+        qc = create_rz_layer(qc, phis[n * 2: n * 3])
     return qc
-
-
-# def create_AMEchecker_polygongraph(qc: qiskit.QuantumCircuit, thetas: np.ndarray,
-#                                  num_layers: int):
-#     """Create circuit includes linear and W
-
-#     Args:
-#         - qc (qiskit.QuantumCircuit): init circuit
-#         - thetas (np.ndarray): parameters
-#         - num_layers (int)
-#         - theta (float): param for general AME
-
-#     Returns:
-#         - qiskit.QuantumCircuit
-#     """
-#     if isinstance(num_layers, int) != True:
-#         num_layers = num_layers['num_layers']
-
-#     # |psi_gen> = U_gen|000...>
-#     qc = create_polygongraph_ansatz(qc, thetas, num_layers)
-#     # U_target^t|psi_gen> with U_target is AME state
-#     qc = qtm.state.create_AME_state_inverse(qc)
-#     return qc
-
-# def create_AMEchecker_star2graph(qc: qiskit.QuantumCircuit, thetas: np.ndarray,
-#                                num_layers: int):
-#     """Create circuit includes linear and AME
-
-#     Args:
-#         - qc (qiskit.QuantumCircuit): init circuit
-#         - thetas (np.ndarray): parameters
-#         - num_layers (int)
-#         - theta (float): param for general W
-
-#     Returns:
-#         - qiskit.QuantumCircuit
-#     """
-#     if isinstance(num_layers, int) != True:
-#         num_layers = num_layers['num_layers']
-
-#     # |psi_gen> = U_gen|000...>
-#     qc = create_stargraph_ansatz(qc, thetas, num_layers)
-#     # U_target^t|psi_gen> with U_target is AME ßstate
-#     qc = qtm.state.create_AME_state_inverse(qc)
-#     return qc
 
 
 def random_ccz_circuit(num_qubits, num_gates):
@@ -1207,33 +734,30 @@ def random_ccz_circuit(num_qubits, num_gates):
             qc.ccz(wires[0], wires[1], wires[2])
     return qc
 
-def create_rz_layer(num_qubits, num_layers = 1):
+def create_rz_layer(num_qubits, thetas):
     """Adds a random number of CZ or CCZ gates (up to `max_gates`) to the given circuit."""
-    thetas = qiskit.circuit.ParameterVector('theta', num_qubits*num_layers)
     qc = qiskit.QuantumCircuit(num_qubits, num_qubits)
-    for j in range(0, num_layers):
-        for i in range(num_qubits):
-            qc.rz(thetas[i+j*num_qubits], i)
+
+    for i in range(num_qubits):
+        qc.rz(thetas[i], i)
     return qc
 
-def create_rx_layer(num_qubits, num_layers = 1):
-    thetas = qiskit.circuit.ParameterVector('theta', num_qubits*num_layers)
+def create_rx_layer(num_qubits, thetas):
     qc = qiskit.QuantumCircuit(num_qubits, num_qubits)
-    for j in range(0, num_layers):
-        for i in range(num_qubits):
-            qc.rx(thetas[i+j*num_qubits], i)
+    for i in range(num_qubits):
+        qc.rx(thetas[i], i)
     return qc
 
-def create_ry_layer(num_qubits, num_layers = 1):
-    thetas = qiskit.circuit.ParameterVector('theta', num_qubits*num_layers)
+def create_ry_layer(num_qubits, thetas):
     qc = qiskit.QuantumCircuit(num_qubits, num_qubits)
-    for j in range(0, num_layers):
-        for i in range(num_qubits):
-            qc.ry(thetas[i+j*num_qubits], i)
+    for i in range(num_qubits):
+        qc.ry(thetas[i], i)
     return qc
 
-def g2(qc: qiskit.QuantumCircuit, thetas: np.ndarray):
-    num_qubits = qc.num_qubits
+def g2(num_qubits: int, num_layers: int) -> qiskit.QuantumCircuit:
+    qc = qiskit.QuantumCircuit(num_qubits, num_qubits)
+    thetas = qiskit.circuit.ParameterVector('theta', 2 * num_qubits * num_layers)
+    n = qc.num_qubits
     j = 0
     for i in range(num_qubits):
         qc.ry(thetas[j], i)
