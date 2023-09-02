@@ -120,7 +120,7 @@ def reset():
     qc = QuantumCircuit(3, 3)
     return qc 
 
-def train(episode,nn_model,optimizer,num_steps,max_layer=2,optimal_max_step=2,discounted_factor = 0.99):
+def train(episode,nn_model,optimizer,num_steps,max_layer=3,optimal_max_step=2,discounted_factor = 0.99):
     # neural_network 
     initial_circuit = reset()
     nn_model.train()
@@ -191,7 +191,7 @@ optimizer = optim.Adam(nn_model.parameters(),lr=learning_rate)
 
 for episode in range(1, MAX_EPISODES+1):
 
-    loss, train_reward = train(episode,nn_model,optimizer,num_steps=5)
+    loss, train_reward = train(episode,nn_model,optimizer,num_steps=3)
     train_rewards.append(train_reward)
     mean_train_rewards = np.mean(train_rewards[-6:])
 
