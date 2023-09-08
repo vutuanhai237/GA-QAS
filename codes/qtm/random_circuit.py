@@ -1,34 +1,17 @@
 import numpy as np
 import qiskit
-from qiskit.circuit import QuantumRegister, ClassicalRegister, QuantumCircuit
-from qiskit.circuit import Reset
-from qiskit.circuit.exceptions import CircuitError
 import qtm.constant
 import random
 
-
-def random_choice_with_condition(d, k):
-    item = None
-    while item is None:
-        item = random.choice(d)
-        if item <= k:
-            return item
-        else:
-            item = None
-    return item
-
-
-def random_circuit2(num_qubits, depth, pool=qtm.constant.operations, max_operands=3, measure=False,
-                    conditional=False, reset=False, seed=None):
-
+def initialize_random_parameters(num_qubits: int, max_operands: int, conditional: bool, seed):
     if max_operands < 1 or max_operands > 3:
-        raise CircuitError("max_operands must be between 1 and 3")
+        raise qiskit.circuit.exceptions.CircuitError("max_operands must be between 1 and 3")
 
-    qr = QuantumRegister(num_qubits, 'q')
-    qc = QuantumCircuit(num_qubits, num_qubits)
+    qr = qiskit.circuit.QuantumRegister(num_qubits, 'q')
+    qc = qiskit.circuit.QuantumCircuit(num_qubits, num_qubits)
 
-    if measure or conditional:
-        cr = ClassicalRegister(num_qubits, 'c')
+    if conditional:
+        cr = qiskit.circuit.ClassicalRegister(num_qubits, 'c')
         qc.add_register(cr)
 
     if seed is None:
@@ -36,18 +19,38 @@ def random_circuit2(num_qubits, depth, pool=qtm.constant.operations, max_operand
 
     rng = np.random.default_rng(seed)
     thetas = qiskit.circuit.ParameterVector('theta')
+    return qr, qc, rng, thetas
+    
+    
+def choice_from_array(arr, condition):
+    item = None
+    while item is None:
+        item = random.choice(arr)
+        if condition(item):
+            return item
+        else:
+            item = None
+    return item
+
+
+def generate_with_pool(num_qubits: int, depth: int, pool=qtm.constant.operations, max_operands: int=3,
+                    conditional: bool =False, seed=None) -> qiskit.QuantumCircuit:
+
+    qr, qc, rng, thetas = initialize_random_parameters(num_qubits, max_operands, conditional, seed)
     thetas_length = 0
     for _ in range(depth):
         remaining_qubits = list(range(num_qubits))
         while remaining_qubits:
             max_possible_operands = min(len(remaining_qubits), max_operands)
-            num_operands = random_choice_with_condition([1,1,1,1,1,1,1,1,2,2], max_possible_operands)
+            num_operands = choice_from_array(
+                [1, 1, 1, 1, 1, 1, 1, 1, 2, 2], lambda value: value <= max_possible_operands)
             rng.shuffle(remaining_qubits)
             operands = remaining_qubits[:num_operands]
             remaining_qubits = [
                 q for q in remaining_qubits if q not in operands]
-            num_op_pool = [item for item in pool if item['num_op'] == num_operands]
-            
+            num_op_pool = [
+                item for item in pool if item['num_op'] == num_operands]
+
             operation = rng.choice(num_op_pool)
             num_params = operation['num_params']
             thetas_length += num_params
@@ -59,24 +62,11 @@ def random_circuit2(num_qubits, depth, pool=qtm.constant.operations, max_operand
     return qc
 
 
-def random_circuit(num_qubits, depth, max_operands=3, measure=False,
-                   conditional=False, reset=False, seed=None):
+def generate(num_qubits, depth, max_operands=3, 
+                   conditional=False, seed=None):
 
-    if max_operands < 1 or max_operands > 3:
-        raise CircuitError("max_operands must be between 1 and 3")
-
-    qr = QuantumRegister(num_qubits, 'q')
-    qc = QuantumCircuit(num_qubits, num_qubits)
-
-    if measure or conditional:
-        cr = ClassicalRegister(num_qubits, 'c')
-        qc.add_register(cr)
-
-    if seed is None:
-        seed = np.random.randint(0, np.iinfo(np.int32).max)
-
-    rng = np.random.default_rng(seed)
-    thetas = qiskit.circuit.ParameterVector('theta')
+    qr, qc, rng, thetas = initialize_random_parameters(num_qubits, max_operands, conditional, seed)
+    
     thetas_length = 0
     for _ in range(depth):
         # choose either 1, 2, or 3 qubits for the operation
@@ -117,28 +107,21 @@ def random_circuit(num_qubits, depth, max_operands=3, measure=False,
                 value = rng.integers(0, np.power(2, num_qubits))
                 op.condition = (cr, value)
             qc.append(op, register_operands)
-
-    if measure:
-        qc.measure(qr, cr)
-
     return qc
 
 
-def random_nonparam_circuit(num_qubits, depth, max_operands=3, measure=False,
-                            conditional=False, reset=False, seed=None):
+def generate_nonparam(num_qubits, depth, max_operands=3,
+                            conditional=False, seed=None):
 
     if max_operands < 1 or max_operands > 3:
-        raise CircuitError("max_operands must be between 1 and 3")
+        raise qiskit.circuit.exceptions.CircuitError("max_operands must be between 1 and 3")
 
-    qr = QuantumRegister(num_qubits, 'q')
-    qc = QuantumCircuit(num_qubits)
+    qr = qiskit.circuit.QuantumRegister(num_qubits, 'q')
+    qc = qiskit.circuit.QuantumCircuit(num_qubits)
 
-    if measure or conditional:
-        cr = ClassicalRegister(num_qubits, 'c')
+    if conditional:
+        cr = qiskit.circuit.ClassicalRegister(num_qubits, 'c')
         qc.add_register(cr)
-
-    if reset:
-        one_q_ops += [Reset]
 
     if seed is None:
         seed = np.random.randint(0, np.iinfo(np.int32).max)
@@ -179,8 +162,5 @@ def random_nonparam_circuit(num_qubits, depth, max_operands=3, measure=False,
                 op.condition = (cr, value)
 
             qc.append(op, register_operands)
-
-    if measure:
-        qc.measure(qr, cr)
 
     return qc

@@ -1,7 +1,6 @@
 import typing
 import qiskit
 import random
-import qtm.ansatz
 import numpy as np
 import qtm.random_circuit
 
@@ -62,10 +61,10 @@ def compose_circuit(qcs: typing.List[qiskit.QuantumCircuit]) -> qiskit.QuantumCi
     """
     qc = qiskit.QuantumCircuit(qcs[0].num_qubits)
     i = 0
-    total_params = 0
+    num_params = 0
     for sub_qc in qcs:
-        total_params += len(sub_qc.parameters)
-    thetas = qiskit.circuit.ParameterVector('theta', total_params)
+        num_params += len(sub_qc.parameters)
+    thetas = qiskit.circuit.ParameterVector('theta', num_params)
     for sub_qc in qcs:
         for instruction in sub_qc:
             if len(instruction[0].params) == 1:
@@ -75,22 +74,6 @@ def compose_circuit(qcs: typing.List[qiskit.QuantumCircuit]) -> qiskit.QuantumCi
                 instruction[0].params[0] = thetas[i:i+1]
                 i += 2
             qc.append(instruction[0], instruction[1])
-
+    qc.draw()
     return qc
 
-
-
-
-
-def mutate(qc: qiskit.QuantumCircuit, pool, is_truncate=True):
-    point = random.random()
-    qc1, qc2 = qtm.evolution.divide_circuit(qc, point)
-    qc1.barrier()
-    qc21, qc22 = qtm.evolution.divide_circuit_by_depth(qc2, 1)
-    genome = qtm.random_circuit.random_circuit2(qc.num_qubits, 1, pool)
-    new_qc = compose_circuit([qc1, genome, qc22])
-    if is_truncate:
-        if new_qc.depth() > qc.depth():
-            new_qc, _ = qtm.evolution.divide_circuit_by_depth(
-                new_qc, qc.depth())
-    return new_qc

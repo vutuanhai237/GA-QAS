@@ -284,8 +284,6 @@ def fit_state_preparation(u: types.FunctionType,
             thetas = optimizer(thetas, grad_loss)
         
         qc_binded = uvaddager.bind_parameters(thetas)
-        if i == 0:
-            qc_binded.draw('mpl', filename ='a.png')
         loss = loss_func(
             qtm.base.measure(qc_binded, list(range(n))))
         loss_values.append(loss)

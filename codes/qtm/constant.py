@@ -3,7 +3,7 @@ import numpy as np
 from qiskit.circuit.library.standard_gates import (IGate, U1Gate, U2Gate, U3Gate, XGate,
                                                    YGate, ZGate, HGate, SGate, SdgGate, TGate,
                                                    TdgGate, RXGate, RYGate, RZGate, CXGate,
-                                                   CYGate, CZGate, CHGate, CRZGate, CU1Gate,
+                                                   CYGate, CZGate, CHGate, CRXGate, CRYGate, CRZGate, CU1Gate,
                                                    CU3Gate, SwapGate, RZZGate,
                                                    CCXGate, CSwapGate)
 
@@ -120,7 +120,13 @@ look_up_operator = {
 
 H_gate = {'name': 'h', 'operation': HGate, 'num_op': 1, 'num_params': 0}
 S_gate = {'name': 's', 'operation': SGate, 'num_op': 1, 'num_params': 0}
+X_gate = {'name': 'x', 'operation': XGate, 'num_op': 1, 'num_params': 0}
+Y_gate = {'name': 'y', 'operation': YGate, 'num_op': 1, 'num_params': 0}
+Z_gate = {'name': 'z', 'operation': ZGate, 'num_op': 1, 'num_params': 0}
 CX_gate = {'name': 'cx', 'operation': CXGate, 'num_op': 2, 'num_params': 0}
+CRX_gate = {'name': 'crx', 'operation': CRXGate, 'num_op': 2, 'num_params': 1}
+CRY_gate = {'name': 'cry', 'operation': CRYGate, 'num_op': 2, 'num_params': 1}
+CRZ_gate = {'name': 'crz', 'operation': CRZGate, 'num_op': 2, 'num_params': 1}
 RX_gate = {'name': 'rx', 'operation': RXGate, 'num_op': 1, 'num_params': 1}
 RY_gate = {'name': 'ry', 'operation': RYGate, 'num_op': 1, 'num_params': 1}
 RZ_gate = {'name': 'rz', 'operation': RZGate, 'num_op': 1, 'num_params': 1}
@@ -138,12 +144,16 @@ clifford_set = [
 operations = [
     H_gate,
     S_gate,
+    X_gate,
+    Y_gate,
+    Z_gate,
     CX_gate,
     RX_gate,
     RY_gate,
     RZ_gate,
-    U2_gate,
-    U3_gate
+    CRX_gate,
+    CRY_gate,
+    CRZ_gate
 ]
 
 
