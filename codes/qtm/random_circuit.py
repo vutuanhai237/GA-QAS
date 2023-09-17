@@ -8,7 +8,7 @@ def initialize_random_parameters(num_qubits: int, max_operands: int, conditional
         raise qiskit.circuit.exceptions.CircuitError("max_operands must be between 1 and 3")
 
     qr = qiskit.circuit.QuantumRegister(num_qubits, 'q')
-    qc = qiskit.circuit.QuantumCircuit(num_qubits, num_qubits)
+    qc = qiskit.circuit.QuantumCircuit(num_qubits)
 
     if conditional:
         cr = qiskit.circuit.ClassicalRegister(num_qubits, 'c')

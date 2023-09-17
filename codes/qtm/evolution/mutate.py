@@ -3,6 +3,7 @@ import random
 import qtm.evolution
 from .utils import compose_circuit
 from .ecircuit import ECircuit
+
 def bitflip_mutate(individual: ECircuit, pool, is_truncate=True):
     point = random.random()
     qc1, qc2 = qtm.evolution.utils.divide_circuit(individual.qc, point)

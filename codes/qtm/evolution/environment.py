@@ -66,7 +66,7 @@ class EEnvironment():
                 bar.update(1)
             if verbose == 2 and generation % 5 == 0:
                 print("Step " + str(generation) + ": " + str(best_score))
-            if best_score < self.threshold:
+            if self.threshold(best_score):
                 break
         print('End best score, end evol progress, percent target: %.1f' % best_score)
         return

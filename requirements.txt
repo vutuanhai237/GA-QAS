@@ -1,3 +1,5 @@
 qiskit
 numpy
 tdqm
+cmake
+pyscf
