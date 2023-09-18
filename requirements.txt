@@ -3,3 +3,4 @@ numpy
 tdqm
 cmake
 pyscf
+pytest

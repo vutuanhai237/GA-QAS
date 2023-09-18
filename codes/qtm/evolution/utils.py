@@ -50,30 +50,4 @@ def random_mutate(population, prob, mutate_func):
     return population
 
 
-def compose_circuit(qcs: typing.List[qiskit.QuantumCircuit]) -> qiskit.QuantumCircuit:
-    """_summary_
-
-    Args:
-        qcs (typing.List[qiskit.QuantumCircuit]): set of quantum circuit
-
-    Returns:
-        qiskit.QuantumCircuit: composed quantum circuit
-    """
-    qc = qiskit.QuantumCircuit(qcs[0].num_qubits)
-    i = 0
-    num_params = 0
-    for sub_qc in qcs:
-        num_params += len(sub_qc.parameters)
-    thetas = qiskit.circuit.ParameterVector('theta', num_params)
-    for sub_qc in qcs:
-        for instruction in sub_qc:
-            if len(instruction[0].params) == 1:
-                instruction[0].params[0] = thetas[i]
-                i += 1
-            if len(instruction[0].params) == 3:
-                instruction[0].params[0] = thetas[i:i+1]
-                i += 2
-            qc.append(instruction[0], instruction[1])
-    qc.draw()
-    return qc
 

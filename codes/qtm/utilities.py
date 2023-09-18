@@ -4,7 +4,7 @@ import scipy
 import qtm.constant
 import numpy as np
 import types
-import pennylane as qml
+import typing
 
 def unit_vector(i, length):
     unit_vector = np.zeros((length))
@@ -227,3 +227,30 @@ def is_pos_def(matrix, error=1e-8):
 def is_normalized(matrix):
     print(np.trace(matrix))
     return np.isclose(np.trace(matrix), 1)
+
+def compose_circuit(qcs: typing.List[qiskit.QuantumCircuit]) -> qiskit.QuantumCircuit:
+    """_summary_
+
+    Args:
+        qcs (typing.List[qiskit.QuantumCircuit]): set of quantum circuit
+
+    Returns:
+        qiskit.QuantumCircuit: composed quantum circuit
+    """
+    qc = qiskit.QuantumCircuit(qcs[0].num_qubits)
+    i = 0
+    num_params = 0
+    for sub_qc in qcs:
+        num_params += len(sub_qc.parameters)
+    thetas = qiskit.circuit.ParameterVector('theta', num_params)
+    for sub_qc in qcs:
+        for instruction in sub_qc:
+            if len(instruction[0].params) == 1:
+                instruction[0].params[0] = thetas[i]
+                i += 1
+            if len(instruction[0].params) == 3:
+                instruction[0].params[0] = thetas[i:i+1]
+                i += 2
+            qc.append(instruction[0], instruction[1])
+    qc.draw()
+    return qc
