@@ -1,4 +1,10 @@
 qiskit
+qiskit-aer
+qiskit-ibmq-provider
+qiskit-ignis
+qiskit-nature
+qiskit-terra 
+matplotlib
 numpy
 tdqm
 cmake
