@@ -91,7 +91,7 @@ class JaxBackend(jax_backend.JaxBackend):  # type: ignore
         jsp = libjax.scipy
         self.name = "jax"
 
-    # it is already child of numpy backend, and self.np = self.jax.np
+    # it is already offspring of numpy backend, and self.np = self.jax.np
 
     def convert_to_tensor(self, tensor: Tensor) -> Tensor:
         result = jnp.asarray(tensor)
