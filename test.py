@@ -16,12 +16,12 @@ def compilation_fitness(qc: qiskit.QuantumCircuit):
         optimizer='adam',
         loss_func='loss_fubini_study'
     )
-    compiler.fit(num_steps=10, verbose=0)
+    compiler.fit(num_steps=5, verbose=0)
     return np.average(compiler.loss_values)
 
-params = {'depth': 4,
+params = {'depth': 5,
           'num_circuit': 8,  # Must mod 8 = 0
-          'num_generation': 5,
+          'num_generation': 2,
           'num_qubits': 3,
           'threshold': 0.2,
           'prob_mutate': 0.01}
@@ -37,3 +37,4 @@ env = environment.EEnvironment(
 
 env.initialize_population()
 env.evol()
+env.save('test.envobj')
