@@ -20,7 +20,7 @@ def compilation_fitness(qc: qiskit.QuantumCircuit):
     return np.average(compiler.loss_values)
 
 params = {'depth': 4,
-          'num_individual': 8,  # Must mod 8 = 0
+          'num_circuit': 8,  # Must mod 8 = 0
           'num_generation': 5,
           'num_qubits': 3,
           'threshold': 0.2,
