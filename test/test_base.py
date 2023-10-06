@@ -18,7 +18,7 @@ def test_onequbit_tomography():
         loss_func = 'loss_fubini_study'
     )
     compiler.fit(num_steps = 100, verbose = 1)
-    assert (np.min(compiler.loss_values) < 0.0001)
+    assert (np.min(compiler.loss_values) < 0.0001 and np.max(compiler.fidelities) > 0.9)
 def test_nqubit_tomography():
     num_qubits = 3
     num_layers = 1
@@ -29,4 +29,4 @@ def test_nqubit_tomography():
         loss_func='loss_fubini_study'
     )
     compiler.fit(num_steps=100, verbose = 1)
-    assert (np.min(compiler.loss_values) < 0.0001)
+    assert (np.min(compiler.loss_values) < 0.0001 and np.max(compiler.fidelities) > 0.9)

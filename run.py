@@ -8,13 +8,13 @@ import qtm.ansatz
 import qtm.constant
 from qtm.evolution import environment, mutate, selection, crossover
 import matplotlib.pyplot as plt
-qc_haar = qtm.state.create_haar_state_inverse(3)
+qc_haar = qtm.state.create_haar_state(3)
 
 
 def compilation_fitness(qc: qiskit.QuantumCircuit, num_steps=5):
     compiler = qtm.qcompilation.QuantumCompilation(
         u=qc,
-        vdagger=qc_haar,
+        vdagger=qc_haar.inverse(),
         optimizer='adam',
         loss_func='loss_fubini_study'
     )

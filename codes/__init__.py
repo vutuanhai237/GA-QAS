@@ -1,1 +1,2 @@
-import qtm
+import sys
+sys.path.insert(0, '..')
