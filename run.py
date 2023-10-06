@@ -9,21 +9,30 @@ import qtm.constant
 from qtm.evolution import environment, mutate, selection, crossover
 import matplotlib.pyplot as plt
 qc_haar = qtm.state.create_haar_state_inverse(3)
-def compilation_fitness(qc: qiskit.QuantumCircuit):
+
+
+def compilation_fitness(qc: qiskit.QuantumCircuit, num_steps=5):
     compiler = qtm.qcompilation.QuantumCompilation(
         u=qc,
         vdagger=qc_haar,
         optimizer='adam',
         loss_func='loss_fubini_study'
     )
-    compiler.fit(num_steps=5, verbose=0)
+    compiler.fit(num_steps=num_steps, verbose=0)
     return np.average(compiler.loss_values)
+
+
+def compilation_threshold(fitness_value):
+    if fitness_value < 0.4:
+        return True
+    return False
+
 
 params = {'depth': 5,
           'num_circuit': 8,  # Must mod 8 = 0
           'num_generation': 2,
           'num_qubits': 3,
-          'threshold': 0.2,
+          'threshold': compilation_threshold,
           'prob_mutate': 0.01}
 
 env = environment.EEnvironment(
@@ -37,4 +46,4 @@ env = environment.EEnvironment(
 
 env.initialize_population()
 env.evol()
-env.save('test.envobj')
+env.save('./experiments/evolution/test.envobj')
