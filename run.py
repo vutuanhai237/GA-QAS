@@ -44,6 +44,6 @@ env = environment.EEnvironment(
     pool = qtm.constant.operations
 )
 
-env.initialize_population()
+
 env.evol()
 env.save('./experiments/evolution/test.envobj')
