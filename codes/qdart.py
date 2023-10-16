@@ -27,6 +27,9 @@ ghz_pool = [
     ("RY", 0),
     ("RY", 1),
     ("RY", 2),
+    ("RX", 0),
+    ("RX", 1),
+    ("RX", 2),
     ("CNOT", 0, 1),
     ("CNOT", 1, 0),
     ("CNOT", 0, 2),
@@ -60,7 +63,7 @@ def LQcompilation(ansatz):
 
     compiler = qtm.qcompilation.QuantumCompilation(
         u = qc,
-        vdagger = qtm.state.create_ghz_state(num_qubits).inverse(),
+        vdagger = qtm.state.create_AME_state(num_qubits).inverse(),
         optimizer = 'adam',
         loss_func = 'loss_fubini_study',
         thetas = np.array(parameters)
@@ -120,7 +123,7 @@ def reset():
     qc = QuantumCircuit(3, 3)
     return qc 
 
-def train(episode,nn_model,optimizer,num_steps,max_layer=3,optimal_max_step=2,discounted_factor = 0.99):
+def train(episode,nn_model,optimizer,num_steps=0,max_layer=5,optimal_max_step=2,discounted_factor = 0.99):
     # neural_network 
     initial_circuit = reset()
     nn_model.train()
@@ -140,9 +143,9 @@ def train(episode,nn_model,optimizer,num_steps,max_layer=3,optimal_max_step=2,di
             qml_old_circuit,
             GHZ_vag_func,
             nq=num_qubits,
-            p=max_layer,
+            p=max_layer, #max_layer 
             batch=10,
-            epochs=60,
+            epochs=1000,
             verbose=False,
             nnp_initial_value=np.zeros([max_layer, c]),
         )
@@ -153,7 +156,7 @@ def train(episode,nn_model,optimizer,num_steps,max_layer=3,optimal_max_step=2,di
         action_prob = nn_model.circuit_to_scalar(new_circuit, pnnp, preset, cset, qml_old_circuit,frozen_mean_cost, device = "cuda")
         dist = distributions.Bernoulli(action_prob)
         action  = dist.sample()
-        print(f"Action:{action}")
+        print(f"Action:{action}, frozen loss:{hist[-1]}")
         log_prob_actions.append(dist.log_prob(action))
 
         if action == 0:
@@ -180,7 +183,6 @@ def train(episode,nn_model,optimizer,num_steps,max_layer=3,optimal_max_step=2,di
 
 train_rewards = []
 MAX_EPISODES = 40
-num_steps = 3
 hidden_dim = 64
 output_dim = 1
 input_dim = 2
@@ -191,7 +193,7 @@ optimizer = optim.Adam(nn_model.parameters(),lr=learning_rate)
 
 for episode in range(1, MAX_EPISODES+1):
 
-    loss, train_reward = train(episode,nn_model,optimizer,num_steps=3)
+    loss, train_reward = train(episode,nn_model,optimizer,max_layer=24,optimal_max_step=2,num_steps=4)
     train_rewards.append(train_reward)
     mean_train_rewards = np.mean(train_rewards[-6:])
 
