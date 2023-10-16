@@ -57,13 +57,28 @@ def circuit(pnnp,preset,cset,old_circuit,rqiskit=False):
     if rqiskit:
         return qml.expval(qml.PauliZ(0))
     return  qml.state()
+
+def create_reference_state(n,state="ghz"):
+    if state == "ghz":
+        reference_state = np.zeros([2**n])
+        reference_state[0] = 1 / np.sqrt(2)
+        reference_state[-1] = 1 / np.sqrt(2)
+        return reference_state 
+    elif state == "ame":
+        return np.array([
+                0.27,
+                0.363,
+                0.326,
+                0,
+                0.377,
+                0,
+                0,
+                0.740*(np.cos(-0.79*np.pi)+1j*np.sin(-0.79*np.pi))])[::-1]
     
 def GHZ_vag(old_circuit, gdata: Tensor,nnp: Tensor, preset: Sequence[int]
             , verbose: bool = False, n: int = 3) -> Tuple[Tensor, Tensor]:
-    reference_state = np.zeros([2**n])
-    reference_state[0] = 1 / np.sqrt(2)
-    reference_state[-1] = 1 / np.sqrt(2)
-    
+
+    reference_state = create_reference_state(n,"ame")
     nnp = nnp.numpy() 
     pnnp = [nnp[i,j] for i,j in enumerate(preset)]
     pnnp = np.array(pnnp)
@@ -75,7 +90,7 @@ def GHZ_vag(old_circuit, gdata: Tensor,nnp: Tensor, preset: Sequence[int]
     cir = qml.QNode(circuit, dev, interface="torch") 
 
     s = cir(pnnp,preset,cset,old_circuit)
-    reference_state = torch.tensor(reference_state).clone().detach()
+    reference_state = torch.tensor(reference_state.copy()).clone().detach()
     loss = torch.sum(torch.abs(s - reference_state))
     try:
         loss.backward()
