@@ -29,7 +29,7 @@ def compilation_threshold(fitness_value):
     return False
 
 params = {'depth': 10,
-          'num_individual': 32,  # Must mod 8 = 0
+          'num_circuit': 32,  # Must mod 8 = 0
           'num_generation': 30,
           'num_qubits': 4,
           'threshold': compilation_threshold,
