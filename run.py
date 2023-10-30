@@ -1,49 +1,47 @@
+import concurrent.futures
+import time
+import qiskit     
 import numpy as np
-import random
-import qiskit
-import qtm.evolution
-import qtm.state
-import qtm.qcompilation
-import qtm.ansatz
-import qtm.constant
-from qtm.evolution import environment, mutate, selection, crossover
-import matplotlib.pyplot as plt
-qc_haar = qtm.state.create_haar_state(3)
+import sys
+sys.path.insert(0, '..')
+import qtm.qcompilation, qtm.ansatz, qtm.state
 
 
-def compilation_fitness(qc: qiskit.QuantumCircuit, num_steps=5):
+class A:
+    def __init__(self):
+        self.t = 0
+    def run(self):
+        self.t = test_nqubit_tomography()
+def test_nqubit_tomography():
+    num_qubits = 3
+    num_layers = 1
     compiler = qtm.qcompilation.QuantumCompilation(
-        u=qc,
-        vdagger=qc_haar.inverse(),
-        optimizer='adam',
+        u = qtm.state.create_ghz_state(num_qubits).inverse(),
+        vdagger = qtm.ansatz.Wchain_ZXZlayer_ansatz(num_qubits, num_layers),
+        optimizer = 'adam',
         loss_func='loss_fubini_study'
     )
-    compiler.fit(num_steps=num_steps, verbose=0)
-    return np.average(compiler.loss_values)
+    compiler.fit(num_steps=10, verbose = 1)
+    return compiler.loss_values[-1]
 
+def func1(a: A):
+    a.run()
+    return a
+def main(numbers):
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        results = executor.map(func1, numbers)
+        return results
+        
 
-def compilation_threshold(fitness_value):
-    if fitness_value < 0.4:
-        return True
-    return False
-
-
-params = {'depth': 5,
-          'num_circuit': 8,  # Must mod 8 = 0
-          'num_generation': 2,
-          'num_qubits': 3,
-          'threshold': compilation_threshold,
-          'prob_mutate': 0.01}
-
-env = environment.EEnvironment(
-    params,
-    fitness_func = compilation_fitness,
-    selection_func = selection.elitist_selection,
-    crossover_func= crossover.onepoint_crossover,
-    mutate_func=mutate.bitflip_mutate,
-    pool = qtm.constant.operations
-)
-
-
-env.evol()
-env.save('./experiments/evolution/test.envobj')
+if __name__ == '__main__':
+    start = time.time()
+    a1 = A()
+    a2 = A()
+    a3 = A()
+    numbers = [a1, a2, a3]
+    
+    results = main(numbers)
+    for a in results:
+        print(a.t)
+    end = time.time()
+    print(end - start)
