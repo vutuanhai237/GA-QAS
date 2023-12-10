@@ -2,7 +2,7 @@ import qiskit
 import numpy as np
 import sys
 sys.path.insert(0, '..')
-import qtm.qcompilation, qtm.ansatz
+import qsee.qcompilation, qsee.ansatz
 
 def test_onequbit_tomography():
     theta = np.random.uniform(0, np.pi)
@@ -11,9 +11,9 @@ def test_onequbit_tomography():
 
     qcu3 = qiskit.QuantumCircuit(1, 1)
     qcu3.u(theta, phi, lambdaz, 0)
-    compiler = qtm.qcompilation.QuantumCompilation(
+    compiler = qsee.qcompilation.QuantumCompilation(
         u = qcu3,
-        vdagger = qtm.ansatz.zxz_layer(1).inverse(),
+        vdagger = qsee.ansatz.zxz_layer(1).inverse(),
         optimizer = 'adam',
         loss_func = 'loss_fubini_study'
     )
@@ -22,9 +22,9 @@ def test_onequbit_tomography():
 def test_nqubit_tomography():
     num_qubits = 3
     num_layers = 1
-    compiler = qtm.qcompilation.QuantumCompilation(
-        u = qtm.state.create_ghz_state(num_qubits).inverse(),
-        vdagger = qtm.ansatz.Wchain_ZXZlayer_ansatz(num_qubits, num_layers),
+    compiler = qsee.qcompilation.QuantumCompilation(
+        u = qsee.state.create_ghz_state(num_qubits).inverse(),
+        vdagger = qsee.ansatz.Wchain_ZXZlayer_ansatz(num_qubits, num_layers),
         optimizer = 'adam',
         loss_func='loss_fubini_study'
     )

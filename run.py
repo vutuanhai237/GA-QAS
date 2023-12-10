@@ -1,47 +1,56 @@
-import concurrent.futures
-import time
-import qiskit     
-import numpy as np
 import sys
-sys.path.insert(0, '..')
-import qtm.qcompilation, qtm.ansatz, qtm.state
+import matplotlib.pyplot as plt
+import qiskit
 
 
-class A:
-    def __init__(self):
-        self.t = 0
-    def run(self):
-        self.t = test_nqubit_tomography()
-def test_nqubit_tomography():
-    num_qubits = 3
-    num_layers = 1
-    compiler = qtm.qcompilation.QuantumCompilation(
-        u = qtm.state.create_ghz_state(num_qubits).inverse(),
-        vdagger = qtm.ansatz.Wchain_ZXZlayer_ansatz(num_qubits, num_layers),
-        optimizer = 'adam',
+from qsee.backend import constant
+from qsee.evolution import environment, crossover, mutate, selection
+import numpy as np, qiskit
+from qsee.compilation.qcompilation import QuantumCompilation
+from qsee.core import ansatz, state
+def compilation_fitness_w(qc: qiskit.QuantumCircuit, num_steps=10):
+    """3 qubits => depth 8
+
+    Args:
+        qc (qiskit.QuantumCircuit): _description_
+        num_steps (int, optional): _description_. Defaults to 5.
+
+    Returns:
+        _type_: _description_
+    """
+    compiler = QuantumCompilation(
+        u=qc,
+        vdagger=state.w(4).inverse(),
+        optimizer='adam',
         loss_func='loss_fubini_study'
     )
-    compiler.fit(num_steps=10, verbose = 1)
-    return compiler.loss_values[-1]
+    compiler.fit(num_steps=num_steps, verbose=0)
+    return np.min(compiler.loss_values)
 
-def func1(a: A):
-    a.run()
-    return a
-def main(numbers):
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        results = executor.map(func1, numbers)
-        return results
-        
-
+def compilation_threshold(fitness_value):
+    if fitness_value < 0.1:
+        return True
+    return False
 if __name__ == '__main__':
+    import time
     start = time.time()
-    a1 = A()
-    a2 = A()
-    a3 = A()
-    numbers = [a1, a2, a3]
-    
-    results = main(numbers)
-    for a in results:
-        print(a.t)
-    end = time.time()
-    print(end - start)
+    params = {'depth': 5,
+            'num_circuit': 8,  # Must mod 8 = 0
+            'num_generation': 10,
+            'num_qubits': 4,
+            'threshold': compilation_threshold,
+            'prob_mutate': 0.1}
+
+    env = environment.EEnvironment(
+        params,
+        fitness_func=compilation_fitness_w,
+        selection_func=selection.elitist_selection,
+        crossover_func=crossover.onepoint_crossover,
+        mutate_func=mutate.bitflip_mutate,
+        pool=constant.operations,
+        file_name='../experiments/evolution/'
+    )
+
+
+    env.evol()
+    print(time.time() - start)
