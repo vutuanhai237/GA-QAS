@@ -15,6 +15,8 @@ h2_631g = lambda distances:  f"H 0 0 {distances[0]}; H 0 0 {distances[1]}"
 h4_sto3g = lambda distances: f"H 0 0 {distances[0]}; H 0 0 {distances[1]}; H 0 0 {distances[2]}; H 0 0 {distances[3]}"
 lih_sto3g = lambda distances: f"Li 0 0 {distances[0]}; H 0 0 {distances[1]}"
 
+file = open('Hydrogen molecules-sto3g-200.txt', 'r').readlines()
+
 def exact_VQE_H2_631g(distances: []):
     return 
 
@@ -40,7 +42,7 @@ def VQE_fitness(qc: qiskit.QuantumCircuit, atom: str, basis: str) -> float:
     """
     computation_value = vqe.general_VQE(qc, atom, basis)
     # I need to modify this
-    exact_value = -0.31226989632488245
+    exact_value = eval(file[round((eval(atom.split(' ')[-1])-0.25)/((2.5-0.25)/199))].split(" ")[-2])
     return utilities.similarity(computation_value, exact_value)
 
 def VQE_H2_631g_fitness(qc: qiskit.QuantumCircuit) -> float:
@@ -67,10 +69,10 @@ def VQE_H2_631g_fitness(qc: qiskit.QuantumCircuit) -> float:
 
 env_metadata = EEnvironmentMetadata(
     num_qubits=4,
-    depth=7,
+    depth=3,
     num_circuit=4,
     num_generation=5,
-    prob_mutate=3/(5 * 8)  # Mutation rate / (depth * num_circuit)
+    prob_mutate=3/(3 * 4)  # Mutation rate / (depth * num_circuit)
 )
 env = EEnvironment(
     metadata=env_metadata,
@@ -90,6 +92,8 @@ print(computation_value)
 
 # Load the result from folder
 env2 = EEnvironment.load(
-    'Desktop/MasterLan_project/GA-QAS/4qubits_VQE_H2_631g_fitness_2023-12-27', 
+    './4qubits_VQE_H2_sto3g_fitness_2023-12-30', 
     VQE_H2_631g_fitness
 )
+
+env2.plot()
