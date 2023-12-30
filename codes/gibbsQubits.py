@@ -67,7 +67,7 @@ def superevol(num_qubits,depth):
         target_state= state.construct_tfd_state(num_qubits, beta = 5).inverse()
     ).fit(num_steps=100)
     
-    with open(f'./experiments/gibbs{num_qubits}qubits.pickle', 'wb') as handle:
+    with open(f'./experiments/gibbs{num_qubits}qubits/results.pickle', 'wb') as handle:
         pickle.dump([qsp1,qsp2,qsp3], handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     # with open(f'./experiments/gibbs{num_qubits}qubits.pickle', 'rb') as handle:
