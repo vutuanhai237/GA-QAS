@@ -87,7 +87,7 @@ env = EEnvironment(
 # Automatically save the results in the same level folder
 env.evol(1)
 
-computation_value = vqe.general_VQE(env.best_circuit, h2_631g([0,0.25]), basis='sto3g')
+computation_value = vqe.general_VQE(env.best_circuit, h2_631g([0,0.25]), basis='631g')
 print(computation_value)
 
 # Load the result from folder
