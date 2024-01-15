@@ -27,8 +27,8 @@ basis_set = 'sto6g'
 #basis_set = '631g'
 
 num_qubits=4
-depth=7
-num_circuit=5
+depth=9
+num_circuit=8
 num_generation=20
 prob_mutate=3/(depth * num_circuit)  # Mutation rate / (depth * num_circuit)
 num_points = 10	
@@ -103,7 +103,7 @@ env = EEnvironment(
 
 localtime = time.localtime(time.time())
 
-#env.set_filename(f"{num_qubits}qubits_{num_points}points_{num_circuit}circuits_{depth}depth_{num_generation}generations_VQE_H2_{basis_set}_fitness_{localtime.tm_year}-{localtime.tm_mon}-{localtime.tm_mday}")
+env.set_filename(f"{num_qubits}qubits_{num_points}points_{num_circuit}circuits_{depth}depth_{num_generation}generations_VQE_H2_{basis_set}_fitness_{localtime.tm_year}-{localtime.tm_mon}-{localtime.tm_mday}")
 
 # Automatically save the results in the same level folder
 env.evol(1)
@@ -113,7 +113,7 @@ print(computation_value)
 
 # Load the result from folder
 env2 = EEnvironment.load(
-    './4444qubits_VQE_H4_sto6g_fitness_2024-1-05', 
+    './4qubits_VQE_H4_sto6g_fitness_2024-1-05', 
    VQE_H2_sto6g_fitness
 )
 
