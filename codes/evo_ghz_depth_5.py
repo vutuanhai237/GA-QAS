@@ -2,7 +2,7 @@ import sys, qiskit
 sys.path.insert(0, '..')
 import matplotlib.pyplot as plt
 import numpy as np
-from qsee.compilation.qsp import QuantumStatePreparation
+from qsee.compilation import QuantumStatePreparation
 from qsee.core import ansatz, state, random_circuit
 from qsee.backend import constant, utilities
 from qsee.evolution import crossover, mutate, selection, threshold

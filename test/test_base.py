@@ -23,7 +23,7 @@ def test_nqubit_tomography():
     num_qubits = 3
     num_layers = 1
     compiler = qsee.qcompilation.QuantumCompilation(
-        u = qsee.state.create_ghz_state(num_qubits).inverse(),
+        u = qsee.core.state.create_ghz_state(num_qubits).inverse(),
         vdagger = qsee.ansatz.Wchain_ZXZlayer_ansatz(num_qubits, num_layers),
         optimizer = 'adam',
         loss_func='loss_fubini_study'
