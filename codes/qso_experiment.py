@@ -91,15 +91,27 @@ def super_evol(_depth, _num_circuit, _num_generation):
     env.evol()
 
 
-depths = list(range(5, 15)) # 3 qubits case
-num_circuits = [4, 8, 16, 32]
+
 num_generations = [10, 20, 30, 40, 50]
 
-for depth in depths:
-    for num_circuit in num_circuits:
-        for num_generation in num_generations: 
+
+def multiple_compile(num_generations):
+    import concurrent.futures
+    executor = concurrent.futures.ProcessPoolExecutor()
+    results = executor.map(bypass_compile, num_generations)
+    return results
+
+def bypass_compile(num_generation):
+    depths = list(range(5, 15)) # 3 qubits case
+    num_circuits = [4, 8, 16, 32]
+    for depth in depths:
+        for num_circuit in num_circuits:
             # check if folder exists
             import os
             if os.path.isdir(f'n={num_qubits},d={depth},n_circuit={num_circuit},n_gen={num_generation}') == False:
                 print(depth, num_circuit, num_generation)
                 super_evol(depth, num_circuit, num_generation)
+
+# main
+if __name__ == 'main':
+    multiple_compile(num_generations)
