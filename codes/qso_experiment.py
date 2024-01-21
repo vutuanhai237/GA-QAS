@@ -113,5 +113,5 @@ def bypass_compile(num_generation):
                 super_evol(depth, num_circuit, num_generation)
 
 # main
-if __name__ == 'main':
+if __name__ == '__main__':
     multiple_compile(num_generations)
