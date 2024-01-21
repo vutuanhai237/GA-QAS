@@ -8,10 +8,10 @@ from qsee.core import ansatz, state, measure
 from qsee.backend import constant, utilities
 from qsee.evolution import crossover, mutate, selection, threshold
 from qsee.evolution.environment import EEnvironment, EEnvironmentMetadata
-
+from funcs import create_params
 n = 10
 m = 5
-num_qubits = 3
+num_qubits = 5
 utrains, utests = [], []
 print("Training states:")
 for i in range(0, n):
@@ -62,15 +62,6 @@ def random_compiltion_test(qc_best: qiskit.QuantumCircuit):
     # C = 1/n * sum(p_0)
     return np.mean(p0s)
 
-
-# qubit = 2, depth = 4
-# qubit = 3, depth around 15
-# qubit = 4, depth around 40
-# qubit = 5, depth around 100
-# num_generation = 10, 20, 30, ...
-# num_circuit = 4, 8, 16, 32, ...
-# depth = 2,3,4, ...
-
 def super_evol(_depth, _num_circuit, _num_generation):
     env_metadata = EEnvironmentMetadata(
         num_qubits = num_qubits,
@@ -89,29 +80,31 @@ def super_evol(_depth, _num_circuit, _num_generation):
     )
     env.set_filename(f'n={num_qubits},d={_depth},n_circuit={_num_circuit},n_gen={_num_generation}')
     env.evol()
-
-
-
-num_generations = [10, 20, 30, 40, 50]
-
-
-def multiple_compile(num_generations):
+def multiple_compile(params):
     import concurrent.futures
     executor = concurrent.futures.ProcessPoolExecutor()
-    results = executor.map(bypass_compile, num_generations)
+    results = executor.map(bypass_compile, params)
     return results
 
-def bypass_compile(num_generation):
-    depths = list(range(5, 15)) # 3 qubits case
-    num_circuits = [4, 8, 16, 32]
-    for depth in depths:
-        for num_circuit in num_circuits:
-            # check if folder exists
-            import os
-            if os.path.isdir(f'n={num_qubits},d={depth},n_circuit={num_circuit},n_gen={num_generation}') == False:
-                print(depth, num_circuit, num_generation)
-                super_evol(depth, num_circuit, num_generation)
+def bypass_compile(param):
+    depth, num_circuit, num_generation = param
+    # check if folder exists
+    import os
+    if os.path.isdir(f'n={num_qubits},d={depth},n_circuit={num_circuit},n_gen={num_generation}') == False:
+        print(depth, num_circuit, num_generation)
+        super_evol(depth, num_circuit, num_generation)
+# qubit = 2, depth = 4
+# qubit = 3, depth around 15
+# qubit = 4, depth around 40
+# qubit = 5, depth around 100
+# num_generation = 10, 20, 30, ...
+# num_circuit = 4, 8, 16, 32, ...
+# depth = 2,3,4, ...
 
 # main
 if __name__ == '__main__':
-    multiple_compile(num_generations)
+    depths = list(range(30, 40)) # 5 qubits case
+    num_circuits = [4, 8, 16, 32]
+    num_generations = [10, 20, 30, 40, 50]
+    params = create_params(depths, num_circuits, num_generations)
+    multiple_compile(params)
