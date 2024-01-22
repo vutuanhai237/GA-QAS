@@ -1,0 +1,1 @@
+{"num_qubits": 4, "depth": 16, "num_circuit": 4, "num_generation": 30, "current_generation": 1, "fitnessss": [[0.67508, 0.6205299999999999, 0.6513, 0.69579]], "best_fitnesss": [0.69579], "prob_mutate": 0.046875}
