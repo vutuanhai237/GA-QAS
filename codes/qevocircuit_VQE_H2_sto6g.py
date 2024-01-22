@@ -21,13 +21,13 @@ lih = lambda distances: f"Li 0 0 {distances[0]}; H 0 0 {distances[1]}"
 #file = open('Li-H molecules-sto-6g-200.txt', 'r').readlines()
 #file = open('H4 square molecules-sto6g-200.txt', 'r').readlines()
 #file =  open('Hydrogen molecules-631g-200.txt', 'r').readlines()
-file =  open('Hydrogen-molecules-sto6g-200.txt', 'r').readlines()
+file =  open('Hydrogen-molecules-sto6g-2000.txt', 'r').readlines()
 
 basis_set = 'sto6g'
 #basis_set = '631g'
 
 num_qubits=4
-depth=6
+depth=8
 num_circuit=8
 num_generation=20
 prob_mutate=3/(depth * num_circuit)  # Mutation rate / (depth * num_circuit)
@@ -55,7 +55,7 @@ def VQE_fitness(qc: qiskit.QuantumCircuit, atom: str, basis: str) -> float:
     """
     computation_value = vqe.general_VQE(qc, atom, basis)
     # I need to modify this
-    exact_value = eval(file[round((eval(atom.split(' ')[-1])-0.25)/((2.5-0.25)/199))].split(" ")[-2])
+    exact_value = eval(file[round((eval(atom.split(' ')[-1])-0.25)/((2.5-0.25)/1999))].split(" ")[-2])
 
     # for h4 square
     #exact_value = eval(file[round(((np.arccos(np.abs(eval(atom.split(' ')[-2]))/R)/np.pi*180*2)-70)/(110-70)*199)].split(' ')[-2])
@@ -103,7 +103,7 @@ env = EEnvironment(
 
 localtime = time.localtime(time.time())
 
-env.set_filename(f"{num_qubits}qubits_{num_points}points_{num_circuit}circuits_{depth}depth_{num_generation}generations_VQE_H2_{basis_set}_fitness_{localtime.tm_year}-{localtime.tm_mon}-{localtime.tm_mday}")
+env.set_filename(f"{num_qubits}qubits_{num_points}points_{num_circuit}circuits_{depth}depth_{num_generation}generations_VQE_H2_{basis_set}_fitness_{localtime.tm_year}-{localtime.tm_mon}-{localtime.tm_mday}_1000")
 
 # Automatically save the results in the same level folder
 env.evol(1)
