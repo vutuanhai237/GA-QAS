@@ -10,18 +10,21 @@ from funcs import create_params
 m = 5
 n = 3
 def testing(n, d, n_circuit, n_gen):
+    df = pd.read_csv('risk.csv')
+    filtered_df = df[(df['n'] == n) & (df['d'] == d) & (df['n_circuit'] == n_circuit) & (df['n_gen'] == n_gen)]
+    row_index = filtered_df.index.tolist()[0]
+    if df.loc[row_index]['risk'] != 0:
+        return
     utests = []
-    print("Testing states:")
     for i in range(0, m):
         utest = state.haar(n)
-        print(qi.Statevector.from_instruction(utest).data)
         utests.append(utest)
     def changeRisk(n, d, n_circuit, n_gen, risk):
         df = pd.read_csv('risk.csv')
         filtered_df = df[(df['n'] == n) & (df['d'] == d) & (df['n_circuit'] == n_circuit) & (df['n_gen'] == n_gen)]
         row_index = filtered_df.index.tolist()[0]
         df.loc[row_index] = [n, d, n_circuit, n_gen, risk, df.loc[row_index]['cost']]
-        df.to_csv(f'risk{n}.csv', index=False)
+        df.to_csv(f'risk.csv', index=False)
         return
     def random_compiltion_test(qc_best: qiskit.QuantumCircuit):
         risks = []

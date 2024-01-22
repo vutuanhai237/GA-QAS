@@ -10,6 +10,11 @@ from funcs import create_params
 m = 5
 n = 2
 def testing(n, d, n_circuit, n_gen):
+    df = pd.read_csv('risk.csv')
+    filtered_df = df[(df['n'] == n) & (df['d'] == d) & (df['n_circuit'] == n_circuit) & (df['n_gen'] == n_gen)]
+    row_index = filtered_df.index.tolist()[0]
+    if df.loc[row_index]['risk'] != 0:
+        return
     utests = []
     for i in range(0, m):
         utest = state.haar(n)
@@ -19,7 +24,7 @@ def testing(n, d, n_circuit, n_gen):
         filtered_df = df[(df['n'] == n) & (df['d'] == d) & (df['n_circuit'] == n_circuit) & (df['n_gen'] == n_gen)]
         row_index = filtered_df.index.tolist()[0]
         df.loc[row_index] = [n, d, n_circuit, n_gen, risk, df.loc[row_index]['cost']]
-        df.to_csv(f'risk{n}.csv', index=False)
+        df.to_csv(f'risk.csv', index=False)
         return
     def random_compiltion_test(qc_best: qiskit.QuantumCircuit):
         risks = []
@@ -43,12 +48,11 @@ def multiple_compile(params):
 
 def bypass_compile(param):
     d, n_circuit, n_gen = param
-    print(n, d, n_circuit, n_gen)
     if os.path.isdir(f'n={n},d={d},n_circuit={n_circuit},n_gen={n_gen}'):
         print(n, d, n_circuit, n_gen)
         testing(n, d, n_circuit, n_gen)
 if __name__ == '__main__':
-    depths = list(range(2, 3)) # 2 qubits case
+    depths = list(range(2, 4)) # 2 qubits case
     num_circuits = [4, 8, 16, 32]
     num_generations = [10, 20, 30, 40, 50]
     params = create_params(depths, num_circuits, num_generations)
