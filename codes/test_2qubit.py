@@ -8,13 +8,11 @@ from qsee.evolution.environment import EEnvironment, EEnvironmentMetadata
 from funcs import create_params
 
 m = 5
-n = 4
+n = 2
 def testing(n, d, n_circuit, n_gen):
     utests = []
-    print("Testing states:")
     for i in range(0, m):
         utest = state.haar(n)
-        print(qi.Statevector.from_instruction(utest).data)
         utests.append(utest)
     def changeRisk(n, d, n_circuit, n_gen, risk):
         df = pd.read_csv('risk.csv')
@@ -45,11 +43,12 @@ def multiple_compile(params):
 
 def bypass_compile(param):
     d, n_circuit, n_gen = param
+    print(n, d, n_circuit, n_gen)
     if os.path.isdir(f'n={n},d={d},n_circuit={n_circuit},n_gen={n_gen}'):
         print(n, d, n_circuit, n_gen)
         testing(n, d, n_circuit, n_gen)
 if __name__ == '__main__':
-    depths = list(range(2, 5)) # 2 qubits case
+    depths = list(range(2, 3)) # 2 qubits case
     num_circuits = [4, 8, 16, 32]
     num_generations = [10, 20, 30, 40, 50]
     params = create_params(depths, num_circuits, num_generations)
