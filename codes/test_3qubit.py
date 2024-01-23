@@ -13,7 +13,7 @@ def testing(n, d, n_circuit, n_gen):
     df = pd.read_csv('risk.csv')
     filtered_df = df[(df['n'] == n) & (df['d'] == d) & (df['n_circuit'] == n_circuit) & (df['n_gen'] == n_gen)]
     row_index = filtered_df.index.tolist()[0]
-    if df.loc[row_index]['risk'] != 0:
+    if (df.loc[row_index]['risk'] != 0 and df.loc[row_index]['cost'] != 0) or df.loc[row_index]['cost'] == 0:
         return
     print(n, d, n_circuit, n_gen)
     utests = []
@@ -43,7 +43,7 @@ def testing(n, d, n_circuit, n_gen):
 
 def multiple_compile(params):
     import concurrent.futures
-    executor = concurrent.futures.ProcessPoolExecutor()
+    executor = concurrent.futures.ProcessPoolExecutor(max_workers=4)
     results = executor.map(bypass_compile, params)
     return results
 
