@@ -11,7 +11,7 @@ from qsee.evolution.environment import EEnvironment, EEnvironmentMetadata
 from funcs import create_params
 n = 10
 m = 5
-num_qubits = 2
+num_qubits = 3
 utrains, utests = [], []
 print("Training states:")
 for i in range(0, n):
@@ -103,7 +103,7 @@ def bypass_compile(param):
 
 # main
 if __name__ == '__main__':
-    depths = list(range(2, 4)) # 2 qubits case
+    depths = list(range(5, 15)) # 3 qubits case
     num_circuits = [4, 8, 16, 32]
     num_generations = [10, 20, 30, 40, 50]
     params = create_params(depths, num_circuits, num_generations)
