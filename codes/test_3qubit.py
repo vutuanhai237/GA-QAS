@@ -15,6 +15,7 @@ def testing(n, d, n_circuit, n_gen):
     row_index = filtered_df.index.tolist()[0]
     if df.loc[row_index]['risk'] != 0:
         return
+    print(n, d, n_circuit, n_gen)
     utests = []
     for i in range(0, m):
         utest = state.haar(n)
@@ -49,7 +50,6 @@ def multiple_compile(params):
 def bypass_compile(param):
     d, n_circuit, n_gen = param
     if os.path.isdir(f'n={n},d={d},n_circuit={n_circuit},n_gen={n_gen}'):
-        print(n, d, n_circuit, n_gen)
         testing(n, d, n_circuit, n_gen)
 if __name__ == '__main__':
     depths = list(range(5, 15)) # 3 qubits case
