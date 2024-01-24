@@ -17,7 +17,7 @@ R = 1.8
 #h2 = lambda distances:  f"H 0 0 {distances[0]}; H 0 0 {distances[1]}"
 #h4_square = lambda distances: f"H 0 {R*np.sin(distances[0]/180*np.pi/2)} {R*np.cos(distances[0]/180*np.pi/2)}; H 0 {-R*np.sin(distances[0]/180*np.pi/2)} {-R*np.cos(distances[0]/180*np.pi/2)}; H 0 {-R*np.sin(distances[0]/180*np.pi/2)} {R*np.cos(distances[0]/180*np.pi/2)}; H 0 {R*np.sin(distances[0]/180*np.pi/2)} {-R*np.cos(distances[0]/180*np.pi/2)} "
 #lih = lambda distances: f"Li 0 0 {distances[0]}; H 0 0 {distances[1]}"
-h4_chain = lambda distances: f"H 0 0 0; H 0 0 {distances}; H 0 0 {distances*2}; H 0 0 {distances*3}"
+h4_chain = lambda distances: f"H 0 0 0; H 0 0 {distances[0]}; H 0 0 {distances[0]*2}; H 0 0 {distances[0]*3}"
 
 
 #file = open('Li-H molecules-sto-6g-200.txt', 'r').readlines()
@@ -30,7 +30,7 @@ basis_set = 'sto6g'
 #basis_set = '631g'
 
 num_qubits=8
-depth=9
+depth=7
 num_circuit=8
 num_generation=20
 prob_mutate=3/(depth * num_circuit)  # Mutation rate / (depth * num_circuit)
@@ -110,7 +110,7 @@ env.set_filename(f"{num_qubits}qubits_{num_points}points_{num_circuit}circuits_{
 # Automatically save the results in the same level folder
 env.evol(1)
 
-computation_value = vqe.general_VQE(env.best_circuit, h4_chain([70]), basis=basis_set)
+computation_value = vqe.general_VQE(env.best_circuit, h4_chain([0.25]), basis=basis_set)
 print(computation_value)
 
 # Load the result from folder

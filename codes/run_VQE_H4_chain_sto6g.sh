@@ -1,7 +1,7 @@
 #!/bin/bash
 #PBS -N GA-QAS-molecules
-#PBS -o /home/nvlinh/out/qevocircuit.out
-#PBS -e /home/nvlinh/err/qevocircuit.error
+#PBS -o /home/nvlinh/out/
+#PBS -e /home/nvlinh/err/
 #PBS -l nodes=1:ppn=8
 #PBS -q octa #defines the destination queue of the job.
 module load python3.10

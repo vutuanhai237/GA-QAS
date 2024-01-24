@@ -27,7 +27,7 @@ basis_set = 'sto6g'
 #basis_set = '631g'
 
 num_qubits=4
-depth=8
+depth=7
 num_circuit=8
 num_generation=20
 prob_mutate=3/(depth * num_circuit)  # Mutation rate / (depth * num_circuit)
