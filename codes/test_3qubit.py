@@ -1,56 +1,68 @@
 import sys, qiskit
 sys.path.insert(0, '..')
-import numpy as np, os, pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np, os, json
 import qiskit.quantum_info as qi
+import pandas as pd
 from qsee.compilation.qsp import QuantumStatePreparation
-from qsee.core import state, measure
+from qsee.core import ansatz, state, measure
+from qsee.backend import constant, utilities
+from qsee.evolution import crossover, mutate, selection, threshold
 from qsee.evolution.environment import EEnvironment, EEnvironmentMetadata
-from funcs import create_params
+from funcs import create_params, calculate_risk
 
-m = 5
 n = 3
-def testing(n, d, n_circuit, n_gen):
-    df = pd.read_csv('risk.csv')
-    filtered_df = df[(df['n'] == n) & (df['d'] == d) & (df['n_circuit'] == n_circuit) & (df['n_gen'] == n_gen)]
-    row_index = filtered_df.index.tolist()[0]
-    if (df.loc[row_index]['risk'] != 0 and df.loc[row_index]['cost'] != 0) or df.loc[row_index]['cost'] == 0:
+def changeRisk(n, d, n_circuit, n_gen, risks):
+    with open(f'risk_{n}.json', 'r') as file:
+        data = json.load(file)
+
+    # Update the data with the new key and list of values
+    data[f'n={n},d={d},n_circuit={n_circuit},n_gen={n_gen}'] = risks
+
+    # Open the JSON file in write mode ('w') and write the updated data
+    with open(f'risk_{n}.json', 'w') as file:
+        json.dump(data, file)
+    return
+def test(n, d, n_circuit, n_gen):
+    with open(f'risk_{n}.json', 'r') as file:
+        data = json.load(file)
+    case = f'n={n},d={d},n_circuit={n_circuit},n_gen={n_gen}'
+    if case in data.keys():
         return
     print(n, d, n_circuit, n_gen)
+    n_train = 20
+    utrains = []
+    for i in range(0, n_train):
+        utrain = state.haar(n)
+        utrains.append(utrain)
+    n_test = 10
     utests = []
-    for i in range(0, m):
+    for i in range(0, n_test):
         utest = state.haar(n)
         utests.append(utest)
-    def changeRisk(n, d, n_circuit, n_gen, risk):
-        df = pd.read_csv('risk.csv')
-        filtered_df = df[(df['n'] == n) & (df['d'] == d) & (df['n_circuit'] == n_circuit) & (df['n_gen'] == n_gen)]
-        row_index = filtered_df.index.tolist()[0]
-        df.loc[row_index] = [n, d, n_circuit, n_gen, risk, df.loc[row_index]['cost']]
-        df.to_csv(f'risk.csv', index=False)
-        return
-    def random_compiltion_test(qc_best: qiskit.QuantumCircuit):
-        risks = []
-        for i in range(0, m):
-            qsp = QuantumStatePreparation(
-                u=qc_best,
-                target_state=utests[i].inverse()
-            ).fit(num_steps=100)
-            risks.append((measure.measure(utests[i]) - measure.measure(qc_best.assign_parameters(qsp.compiler.thetas)))**2)
-        return np.mean(risks)/4
-    env = EEnvironment.load(f'n={n},d={d},n_circuit={n_circuit},n_gen={n_gen}', None)
-    # env = EEnvironment.load(f'n={2},d={2},n_circuit={4},n_gen={10}', None)
-    risk = (random_compiltion_test(env.best_circuit))
-    changeRisk(n, d, n_circuit, n_gen, risk)
+    env = EEnvironment.load(case, None)
+    best_circuit = env.best_circuit
+    risks = []
+    for i in range(0, n_train):
+        qsp = QuantumStatePreparation(
+            u=best_circuit,
+            target_state=utrains[i].inverse()
+        ).fit(num_steps=100)
+        risk = calculate_risk(utests, best_circuit.assign_parameters(qsp.thetas))
+        risks.append(risk)
+    changeRisk(n, d, n_circuit, n_gen, risks)
+    return risks
 
 def multiple_compile(params):
     import concurrent.futures
-    executor = concurrent.futures.ProcessPoolExecutor(max_workers=4)
+    executor = concurrent.futures.ProcessPoolExecutor(4)
     results = executor.map(bypass_compile, params)
     return results
 
 def bypass_compile(param):
     d, n_circuit, n_gen = param
     if os.path.isdir(f'n={n},d={d},n_circuit={n_circuit},n_gen={n_gen}'):
-        testing(n, d, n_circuit, n_gen)
+        test(n, d, n_circuit, n_gen)
 if __name__ == '__main__':
     depths = list(range(5, 15)) # 3 qubits case
     num_circuits = [4, 8, 16, 32]
