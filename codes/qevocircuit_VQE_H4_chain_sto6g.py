@@ -30,8 +30,8 @@ basis_set = 'sto6g'
 #basis_set = '631g'
 
 num_qubits=8
-depth=7
-num_circuit=8
+depth=17
+num_circuit=16
 num_generation=20
 prob_mutate=3/(depth * num_circuit)  # Mutation rate / (depth * num_circuit)
 num_points = 10	
