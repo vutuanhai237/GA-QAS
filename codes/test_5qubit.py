@@ -55,7 +55,7 @@ def test(n, d, n_circuit, n_gen):
 
 def multiple_compile(params):
     import concurrent.futures
-    executor = concurrent.futures.ProcessPoolExecutor(4)
+    executor = concurrent.futures.ProcessPoolExecutor()
     results = executor.map(bypass_compile, params)
     return results
 
