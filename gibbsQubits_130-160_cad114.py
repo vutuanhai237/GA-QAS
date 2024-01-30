@@ -108,7 +108,8 @@ def superevol(num_qubits,depth,i=100):
         mutate_func=mutate.layerflip_mutate,
         threshold_func=threshold.compilation_threshold
     )
-    env.evol(counter=i)
+    env.set_filename(f'Trial_{i}')
+    env.evol()
 
 def multiple_compile(params):
     import concurrent.futures
