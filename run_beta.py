@@ -1,13 +1,19 @@
-import sys
+import sys, qiskit
+sys.path.insert(0, '..')
 import matplotlib.pyplot as plt
-import qiskit
-from qsee.backend import constant
+import numpy as np
+import qsee
+from qsee.compilation.qsp import QuantumStatePreparation
+from qsee.core import ansatz, state, random_circuit
+from qsee.backend import constant, utilities
+from qsee.evolution import crossover, mutate, selection, threshold
+from qsee.evolution.environment import EEnvironment, EEnvironmentMetadata
+import pickle
+import json
 from qsee.compilation.qsp import QuantumStatePreparation, metric
-from qsee.backend import utilities
-from qsee.core import state
-import json 
-import numpy as np 
+import glob 
 #purity
+
 # 0 =  (0.24999999999999994+0j)
 # 1 =  (0.5677667882613809+3.851859888774472e-34j)
 # 2 =  (0.730855309056976-4.622231866529366e-33j)
@@ -213,32 +219,56 @@ import numpy as np
 #     qsp.save(f"/home/fptu/vJ3XOz68/qhack/GA-QAS/Trial_8_4qubits_compilation_fitness_gibbs_2024-01-21/best_circuit_{beta_coeff}")
 #     print("End") 
 
-# qc = utilities.load_circuit('/home/fptu/vJ3XOz68/qhack/GA-QAS/Trial_9_4qubits_compilation_fitness_gibbs_2024-01-22/best_circuit')
-# print(qc.depth(),qc.num_qubits)
-# num_qubits = 2
+def train_bestc_circuit(filename):
+    qc = utilities.load_circuit(filename+"/best_circuit")
+    num_qubits = 2
+    
+    gibbs_purities, gibbs_fidelities = [], []
+    for beta_coeff in range(0,11):
+        print("Begin")
+        tgt_state = state.construct_tfd_state(num_qubits, beta = beta_coeff).inverse()
+        qsp = QuantumStatePreparation(
+            u=qc,
+            target_state= tgt_state
+        ).fit(100)
+        
+        gibbs_purity, gibbs_fidelity = metric.gibbs_metrics(u=qc,vdagger=tgt_state,thetass=[qsp.thetas])
+        gibbs_purities.append(gibbs_purity)
+        gibbs_fidelities.append(gibbs_fidelity)
 
-# for beta_coeff in range(0,11):
-#     print("Begin")
-#     qsp = QuantumStatePreparation(
-#         u=qc,
-#         target_state= state.construct_tfd_state(num_qubits, beta = beta_coeff).inverse()
-#     ).fit(100)
+        qsp.save(filename+f"/best_circuit_{beta_coeff}")
+        print("End")
+    
+    print("file name:",filename.split("/")[-1])
+    
+    print(f"gibbs purity:",gibbs_purities)
+    print(f"gibbs fidelity:",gibbs_fidelities)
 
-#     qsp.save(f"/home/fptu/vJ3XOz68/qhack/GA-QAS/Trial_9_4qubits_compilation_fitness_gibbs_2024-01-22/best_circuit_{beta_coeff}")
-#     print("End")
+def multiple_compile(filename_list):
+    import concurrent.futures
+    executor = concurrent.futures.ProcessPoolExecutor()
+    results = executor.map(bypass_compile, filename_list)
+    return results
 
-def load_data(num_qubits,filename):
-    qc = utilities.load_circuit(filename+f'/best_circuit_{num_qubits}/u')
-    tgt = utilities.load_circuit(filename+f'/best_circuit_{num_qubits}/vdagger')
+def bypass_compile(filename):
+    train_bestc_circuit(filename)
 
-    data = json.load(open(filename+f"/best_circuit_{num_qubits}/info.json"))
+files = glob.glob('/home/fptu/vJ3XOz68/qhack/GA-QAS/data/*')
+multiple_compile(files)
 
-    gibbs_purity, gibbs_fidelity = metric.gibbs_metrics(u=qc,vdagger=tgt.inverse(),thetass=[data["thetas"]])
+# def load_data(num_qubits,filename):
+#     qc = utilities.load_circuit(filename+f'/best_circuit_{num_qubits}/u')
+#     tgt = utilities.load_circuit(filename+f'/best_circuit_{num_qubits}/vdagger')
 
-    return gibbs_purity, gibbs_fidelity
+#     data = json.load(open(filename+f"/best_circuit_{num_qubits}/info.json"))
 
-gibbs_purities0 = [] 
-gibbs_fidelities0 = []
+#     gibbs_purity, gibbs_fidelity = metric.gibbs_metrics(u=qc,vdagger=tgt.inverse(),thetass=[data["thetas"]])
+
+#     return gibbs_purity, gibbs_fidelity
+
+
+# gibbs_purities0 = [] 
+# gibbs_fidelities0 = []
 
 # gibbs_purities1 = [] 
 # gibbs_fidelities1 = []
@@ -267,14 +297,14 @@ gibbs_fidelities0 = []
 # gibbs_purities9 = [] 
 # gibbs_fidelities9 = []
 
-for i in range (11):
-    gibbs_purity, gibbs_fidelity = load_data(i,"/home/fptu/vJ3XOz68/qhack/GA-QAS/Trial_1_4qubits_compilation_fitness_gibbs_2024-01-25")
+# for i in range (11):
+#     gibbs_purity, gibbs_fidelity = load_data(i,"/home/fptu/vJ3XOz68/qhack/GA-QAS/Trial_1_4qubits_compilation_fitness_gibbs_2024-01-25")
     
-    gibbs_purities0.append(abs(gibbs_purity))
-    gibbs_fidelities0.append(abs(gibbs_fidelity))
+#     gibbs_purities0.append(abs(gibbs_purity))
+#     gibbs_fidelities0.append(abs(gibbs_fidelity))
 
 
-print(gibbs_purities0,gibbs_fidelities0)
+# print(gibbs_purities0,gibbs_fidelities0)
 #     gibbs_purities1.append(abs(gibbs_purity))
 #     gibbs_fidelities1.append(abs(gibbs_fidelity))
 
