@@ -108,7 +108,8 @@ def superevol(num_qubits,depth,i=100):
         mutate_func=mutate.layerflip_mutate,
         threshold_func=threshold.compilation_threshold
     )
-    env.evol(counter=i)
+    env.set_filename(f'Trial{i}')
+    env.evol()
 
-for i in range(0,100):
+for i in range(100,130):
     superevol(2,9,i=i)
