@@ -92,7 +92,7 @@ def superevol(num_qubits,depth,i=100):
             qsp4.compiler.metrics['loss_fubini_study'][-1],
             qsp5.compiler.metrics['loss_fubini_study'][-1]]) 
             
-    num_circuit = 16
+    num_circuit = 80
     env_metadata = EEnvironmentMetadata(
         num_qubits = 2*num_qubits,
         depth = depth,
@@ -108,7 +108,7 @@ def superevol(num_qubits,depth,i=100):
         mutate_func=mutate.layerflip_mutate,
         threshold_func=threshold.compilation_threshold
     )
-    env.set_filename(f'Trial_{i}')
+    env.set_filename(f'Trial_{i}_80circuit')
     env.evol()
 
 def multiple_compile(params):
@@ -121,8 +121,5 @@ def bypass_compile(i):
     superevol(2,9,i=i)
 
 if __name__ == '__main__':
-    iss = list(range(130, 160))
+    iss = list(range(1, 50))
     multiple_compile(iss)
-    
-for i in range(0,100):
-    superevol(2,9,i=i)
