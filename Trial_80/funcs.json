@@ -1,1 +1,0 @@
-{"fitness_func": "compilation_fitness_gibbs", "crossover_func": "onepoint_crossover", "mutate_func": "layerflip_mutate", "selection_func": "elitist_selection", "threshold_func": "compilation_threshold"}
