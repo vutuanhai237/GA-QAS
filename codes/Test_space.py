@@ -36,7 +36,7 @@ import concurrent.futures
 
 def VQE_Test(dis):
   data = {'seed': [], 'energy': [], 'thetas': []}
-  interation = 10000
+  interation = 1000
   seeds = np.arange(1,32+1)
   basis_set = 'sto6g'
   theta = dis
@@ -60,7 +60,7 @@ def VQE_Test(dis):
   qubit_op = mapper.map(hamiltonian)
 
 
-  with open(f"./8qubits_10points_16circuits_19depth_20generations_VQE_H4_chain_sto6g_fitness_2024-1-27_1000/best_circuit.qpy", "rb") as qpy_file_read:
+  with open(f"./8qubits_10points_16circuits_21depth_20generations_VQE_H4_chain_sto6g_fitness_2024-1-25_1000/best_circuit.qpy", "rb") as qpy_file_read:
       ansatz = qpy.load(qpy_file_read)[0]
 
   # def callback(eval_count, params, value, meta):
@@ -89,7 +89,7 @@ def VQE_Test(dis):
     data['energy'].append(float(result))
     data['thetas'].append(list(result1.optimal_point))
     print(data)
-  with open(f"result_H4_19depth_SLSQP_{dis}_{interation}.json", "w") as outfile:
+  with open(f"result_H4_21depth_SLSQP_{dis}_{interation}.json", "w") as outfile:
     json.dump(data, outfile)
   
 if __name__ == '__main__':
