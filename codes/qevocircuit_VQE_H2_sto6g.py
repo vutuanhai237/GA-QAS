@@ -8,6 +8,10 @@ from qsee.backend import constant, utilities
 from qsee.evolution import crossover, mutate, selection, threshold
 from qsee.vqe import vqe, utilities
 from qsee.evolution.environment import EEnvironment, EEnvironmentMetadata
+<<<<<<< HEAD
+=======
+import time
+>>>>>>> 641d69c914a41f23ea39d1b5eb55e0d121203180
 #%load_ext autoreload
 #%autoreload 2
 
@@ -20,12 +24,25 @@ lih = lambda distances: f"Li 0 0 {distances[0]}; H 0 0 {distances[1]}"
 #file = open('Li-H molecules-sto-6g-200.txt', 'r').readlines()
 #file = open('H4 square molecules-sto6g-200.txt', 'r').readlines()
 #file =  open('Hydrogen molecules-631g-200.txt', 'r').readlines()
+<<<<<<< HEAD
 file =  open('Hydrogen molecules-sto6g-200.txt', 'r').readlines()
+=======
+file =  open('Hydrogen-molecules-sto6g-2000.txt', 'r').readlines()
+>>>>>>> 641d69c914a41f23ea39d1b5eb55e0d121203180
 
 basis_set = 'sto6g'
 #basis_set = '631g'
 
+<<<<<<< HEAD
 
+=======
+num_qubits=4
+depth=7
+num_circuit=8
+num_generation=20
+prob_mutate=3/(depth * num_circuit)  # Mutation rate / (depth * num_circuit)
+num_points = 10	
+>>>>>>> 641d69c914a41f23ea39d1b5eb55e0d121203180
 
 def general_VQE_atom(distances: []):
     def VQE_atom(qc: qiskit.QuantumCircuit):
@@ -49,7 +66,11 @@ def VQE_fitness(qc: qiskit.QuantumCircuit, atom: str, basis: str) -> float:
     """
     computation_value = vqe.general_VQE(qc, atom, basis)
     # I need to modify this
+<<<<<<< HEAD
     exact_value = eval(file[round((eval(atom.split(' ')[-1])-0.25)/((2.5-0.25)/199))].split(" ")[-2])
+=======
+    exact_value = eval(file[round((eval(atom.split(' ')[-1])-0.25)/((2.5-0.25)/1999))].split(" ")[-2])
+>>>>>>> 641d69c914a41f23ea39d1b5eb55e0d121203180
 
     # for h4 square
     #exact_value = eval(file[round(((np.arccos(np.abs(eval(atom.split(' ')[-2]))/R)/np.pi*180*2)-70)/(110-70)*199)].split(' ')[-2])
@@ -65,7 +86,11 @@ def VQE_H2_sto6g_fitness(qc: qiskit.QuantumCircuit) -> float:
     Returns:
         float: fitness value
     """
+<<<<<<< HEAD
     num_points = 10
+=======
+    #num_points = num_points
+>>>>>>> 641d69c914a41f23ea39d1b5eb55e0d121203180
     # Create pairs of distanc
     list_distances = list(zip([0]*num_points, np.linspace(.25,  2.5, num_points)))
     fitnesss = []
@@ -79,11 +104,19 @@ def VQE_H2_sto6g_fitness(qc: qiskit.QuantumCircuit) -> float:
 
 
 env_metadata = EEnvironmentMetadata(
+<<<<<<< HEAD
     num_qubits=4,
     depth=5,
     num_circuit=4,
     num_generation=5,
     prob_mutate=3/(5 * 4)  # Mutation rate / (depth * num_circuit)
+=======
+    num_qubits = num_qubits,
+    depth= depth,
+    num_circuit = num_circuit,
+    num_generation = num_generation,
+    prob_mutate= prob_mutate  # Mutation rate / (depth * num_circuit)
+>>>>>>> 641d69c914a41f23ea39d1b5eb55e0d121203180
 )
 env = EEnvironment(
     metadata=env_metadata,
@@ -95,6 +128,13 @@ env = EEnvironment(
     threshold_func=threshold.compilation_threshold
 )
 
+<<<<<<< HEAD
+=======
+localtime = time.localtime(time.time())
+
+env.set_filename(f"{num_qubits}qubits_{num_points}points_{num_circuit}circuits_{depth}depth_{num_generation}generations_VQE_H2_{basis_set}_fitness_{localtime.tm_year}-{localtime.tm_mon}-{localtime.tm_mday}_1000")
+
+>>>>>>> 641d69c914a41f23ea39d1b5eb55e0d121203180
 # Automatically save the results in the same level folder
 env.evol(1)
 
@@ -103,7 +143,11 @@ print(computation_value)
 
 # Load the result from folder
 env2 = EEnvironment.load(
+<<<<<<< HEAD
     './8qubits_VQE_H4_sto6g_fitness_2024-1-05', 
+=======
+    './4qubits_VQE_H4_sto6g_fitness_2024-1-05', 
+>>>>>>> 641d69c914a41f23ea39d1b5eb55e0d121203180
    VQE_H2_sto6g_fitness
 )
 

@@ -1,1 +1,0 @@
-{"fitness_func": "VQE_H2_631g_fitness", "crossover_func": "onepoint_crossover", "mutate_func": "layerflip_mutate", "selection_func": "elitist_selection", "threshold_func": "compilation_threshold"}

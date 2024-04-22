@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import time
 import numpy as np
 import concurrent.futures
@@ -33,3 +34,13 @@ def main():
 
 if __name__ == '__main__':
     main()
+=======
+def main():
+
+    file = open("Test_HPC.txt", "w")
+    file.write("Test") 
+    file.close()
+
+if __name__ == '__main__':
+    main()
+>>>>>>> 641d69c914a41f23ea39d1b5eb55e0d121203180
