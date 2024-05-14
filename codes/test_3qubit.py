@@ -15,7 +15,7 @@ n = 3
 def changeRisk(n, d, n_circuit, n_gen, risks):
     with open(f'risk_{n}.json', 'r') as file:
         data = json.load(file)
-
+    print(risks)
     # Update the data with the new key and list of values
     data[f'n={n},d={d},n_circuit={n_circuit},n_gen={n_gen}'] = risks
 
@@ -28,8 +28,9 @@ def test(n, d, n_circuit, n_gen):
         data = json.load(file)
     case = f'n={n},d={d},n_circuit={n_circuit},n_gen={n_gen}'
     if case in data.keys():
+        print(f'{case} already exists')
         return
-    print(n, d, n_circuit, n_gen)
+    
     n_train = 20
     utrains = []
     for i in range(0, n_train):
@@ -40,7 +41,9 @@ def test(n, d, n_circuit, n_gen):
     for i in range(0, n_test):
         utest = state.haar(n)
         utests.append(utest)
-    env = EEnvironment.load(case, None)
+
+    env = EEnvironment.load('../data/' + case, None)
+
     best_circuit = env.best_circuit
     risks = []
     for i in range(0, n_train):
@@ -61,11 +64,15 @@ def multiple_compile(params):
 
 def bypass_compile(param):
     d, n_circuit, n_gen = param
-    if os.path.isdir(f'n={n},d={d},n_circuit={n_circuit},n_gen={n_gen}'):
+    if os.path.isdir(f'../data/n={n},d={d},n_circuit={n_circuit},n_gen={n_gen}'):
         test(n, d, n_circuit, n_gen)
 if __name__ == '__main__':
-    depths = list(range(5, 15)) # 3 qubits case
-    num_circuits = [4, 8, 16, 32]
-    num_generations = [10, 20, 30, 40, 50]
+    # depths = list(range(5, 15)) # 3 qubits case
+    # num_circuits = [4, 8, 16, 32]
+    # num_generations = [10, 20, 30, 40, 50]
+    depths = [7]
+    num_circuits = [4]
+    num_generations = [10]
+
     params = create_params(depths, num_circuits, num_generations)
     multiple_compile(params)
