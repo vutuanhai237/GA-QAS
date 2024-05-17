@@ -103,7 +103,7 @@ def bypass_compile(param):
 
 # main
 if __name__ == '__main__':
-    depths = list(range(2, 5)) # 5 qubits case
+    depths = [3] # 5 qubits case
     num_circuits = [32]
     num_generations = [50]
     params = create_params(depths, num_circuits, num_generations)
