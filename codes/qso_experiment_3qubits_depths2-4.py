@@ -3,11 +3,11 @@ sys.path.insert(0, '..')
 import matplotlib.pyplot as plt
 import numpy as np
 import qiskit.quantum_info as qi
-from qsee.compilation.qsp import QuantumStatePreparation
-from qsee.core import ansatz, state, measure
-from qsee.backend import constant, utilities
-from qsee.evolution import crossover, mutate, selection, threshold
-from qsee.evolution.environment import EEnvironment, EEnvironmentMetadata
+from qoop.compilation.qsp import QuantumStatePreparation
+from qoop.core import ansatz, state, measure
+from qoop.backend import constant, utilities
+from qoop.evolution import crossover, mutate, selection, threshold
+from qoop.evolution.environment import EEnvironment, EEnvironmentMetadata
 from funcs import create_params
 n = 10
 m = 5

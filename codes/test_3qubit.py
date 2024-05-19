@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 import numpy as np, os, json
 import qiskit.quantum_info as qi
 import pandas as pd
-from qsee.compilation.qsp import QuantumStatePreparation
-from qsee.core import ansatz, state, measure
-from qsee.backend import constant, utilities
-from qsee.evolution import crossover, mutate, selection, threshold
-from qsee.evolution.environment import EEnvironment, EEnvironmentMetadata
+from qoop.compilation.qsp import QuantumStatePreparation
+from qoop.core import ansatz, state, measure
+from qoop.backend import constant, utilities
+from qoop.evolution import crossover, mutate, selection, threshold
+from qoop.evolution.environment import EEnvironment, EEnvironmentMetadata
 from funcs import create_params, calculate_risk
 
 n = 3

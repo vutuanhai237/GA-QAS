@@ -11,5 +11,5 @@ The structure of this repository:
 - test: include test cases for CI/CD
 
 Dependencies:
-- qsee: a self-development package which is developing in another repository
+- qoop: a self-development package which is developing in another repository
 - qiskit: 0.45.0

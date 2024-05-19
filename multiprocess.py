@@ -1,9 +1,9 @@
 import numpy as np
 import qiskit
 import qiskit.quantum_info as qi
-from qsee.core import state, metric, ansatz
-from qsee.compilation.qcompilation import QuantumCompilation
-from qsee.backend import utilities
+from qoop.core import state, metric, ansatz
+from qoop.compilation.qcompilation import QuantumCompilation
+from qoop.backend import utilities
 
 
 n_test = 10
