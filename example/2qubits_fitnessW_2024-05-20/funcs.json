@@ -1,0 +1,1 @@
+{"fitness_func": "fitnessW", "crossover_func": "onepoint_crossover", "mutate_func": "bitflip_mutate", "selection_func": "elitist_selection", "threshold_func": "compilation_threshold"}
