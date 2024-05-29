@@ -3,14 +3,14 @@
 Instruction:
 1. Install [Git](https://git-scm.com/) or [GitHub Desktop](https://desktop.github.com/), and an editor such as Visual Studio Code.
 2. Send your GitHub username to haivt@uit.edu.vn, after that, I will add you as a collaborator in this repository.
-3. Clone the codes to your computer (**qsee** is a core package of our various repository)
+3. Clone the codes to your computer (**qoop** is a core package of our various repository)
 ```
 git clone https://github.com/vutuanhai237/EvolutionalQuantumCircuit.git
 cd EvolutionalQuantumCircuit
-git clone https://github.com/vutuanhai237/qsee.git
+git clone https://github.com/vutuanhai237/qoop.git
 ```
 
-Note that the **qsee** folder must be on the same level as the **codes** folder.
+Note that the **qoop** folder must be on the same level as the **codes** folder.
 
 4. Create a new branch (set name as your username) for your work and switch to your branch.
 5. Make sure that you have installed python 3+ version. After that, install all needed packages.
@@ -26,7 +26,7 @@ pytest
 ```
 or reading details in the codes folder, especially in the file codes/qevocircuit_QC.ipynb or codes/qevocircuit_VQE.ipynb.
 
-- For the genetic algorithm project, we will mainly add/modify code in the qsee/evolution/ folder (such as adding more selection/mutation/crossover functions).
+- For the genetic algorithm project, we will mainly add/modify code in the qoop/evolution/ folder (such as adding more selection/mutation/crossover functions).
 
 - Whenever you develop your code, you should use the jupyter notebook format, it will save you time.
 
@@ -34,4 +34,4 @@ or reading details in the codes folder, especially in the file codes/qevocircuit
 
 # **Testing and merging pull requests**
 
-Your pull request will be automatically tested by qsee Github Action (testing status can be checked here: https://github.com/vutuanhai237/EvolutionalQuantumCircuit/actions). If any builders have failed, you should fix the issue. No need to close pull request and open a new one! Once all the builders are "green", I will review your code. 
+Your pull request will be automatically tested by qoop Github Action (testing status can be checked here: https://github.com/vutuanhai237/EvolutionalQuantumCircuit/actions). If any builders have failed, you should fix the issue. No need to close pull request and open a new one! Once all the builders are "green", I will review your code. 
