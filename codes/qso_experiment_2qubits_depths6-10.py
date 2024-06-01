@@ -8,7 +8,7 @@ from qoop.core import ansatz, state, measure
 from qoop.backend import constant, utilities
 from qoop.evolution import crossover, mutate, selection, threshold
 from qoop.evolution.environment import EEnvironment, EEnvironmentMetadata
-from funcs import create_params
+from qoop.evolution.utilities import create_params
 n = 10
 m = 5
 num_qubits = 2
@@ -16,12 +16,12 @@ utrains, utests = [], []
 print("Training states:")
 for i in range(0, n):
     utrain = state.haar(num_qubits)
-    print(qi.Statevector.from_instruction(utrain).data)
+    # print(qi.Statevector.from_instruction(utrain).data)
     utrains.append(utrain)
 print("Testing states:")
 for i in range(0, m):
     utest = state.haar(num_qubits)
-    print(qi.Statevector.from_instruction(utest).data)
+    # print(qi.Statevector.from_instruction(utest).data)
     utests.append(utest)
     
 
@@ -50,17 +50,6 @@ def full_random_compilation_fitness(qc: qiskit.QuantumCircuit):
     # C = 1/n * sum(p_0)
     return np.mean(p0s)
 
-def random_compiltion_test(qc_best: qiskit.QuantumCircuit):
-    risks = []
-    for i in range(0, m):
-        qsp = QuantumStatePreparation(
-            u=qc_best,
-            target_state=utests[i].inverse()
-        ).fit(num_steps=10)
-        # loss_basic = 1 - p0 => p0 = 1 - loss_basic
-        risks.append(measure.measure(utests[i]) - measure.measure(qc_best.assign_parameters(qsp.compiler.parameters)))
-    # C = 1/n * sum(p_0)
-    return np.mean(p0s)
 
 def super_evol(_depth, _num_circuit, _num_generation):
     env_metadata = EEnvironmentMetadata(
@@ -90,7 +79,7 @@ def bypass_compile(param):
     depth, num_circuit, num_generation = param
     # check if folder exists
     import os
-    if os.path.isdir(f'n={num_qubits},d={depth},n_circuit={num_circuit},n_gen={num_generation}') == False:
+    if os.path.isdir(f'../data/n={num_qubits},d={depth},n_circuit={num_circuit},n_gen={num_generation}') == False:
         print(depth, num_circuit, num_generation)
         super_evol(depth, num_circuit, num_generation)
 # qubit = 2, depth = 4
@@ -102,9 +91,10 @@ def bypass_compile(param):
 # depth = 2,3,4, ...
 
 # main
+# n=2,d=5,n_circuit=32,n_gen=10
 if __name__ == '__main__':
-    depths = list(range(6, 10)) # 5 qubits case
-    num_circuits = [32]
-    num_generations = [50]
+    depths = [5] #list(range(6, 10)) # 5 qubits case
+    num_circuits = [4,8,16,32]
+    num_generations = [10,20,30,40]
     params = create_params(depths, num_circuits, num_generations)
     multiple_compile(params)
