@@ -8,7 +8,7 @@ from qoop.core import ansatz, state, measure
 from qoop.backend import constant, utilities
 from qoop.evolution import crossover, mutate, selection, threshold
 from qoop.evolution.environment import EEnvironment, EEnvironmentMetadata
-from funcs import create_params
+from qoop.evolution.utilities import create_params
 n = 10
 m = 5
 num_qubits = 4
@@ -16,12 +16,12 @@ utrains, utests = [], []
 print("Training states:")
 for i in range(0, n):
     utrain = state.haar(num_qubits)
-    print(qi.Statevector.from_instruction(utrain).data)
+    #print(qi.Statevector.from_instruction(utrain).data)
     utrains.append(utrain)
 print("Testing states:")
 for i in range(0, m):
     utest = state.haar(num_qubits)
-    print(qi.Statevector.from_instruction(utest).data)
+    #print(qi.Statevector.from_instruction(utest).data)
     utests.append(utest)
     
 
@@ -103,8 +103,8 @@ def bypass_compile(param):
 
 # main
 if __name__ == '__main__':
-    depths = [2] # 5 qubits case
-    num_circuits = [32]
-    num_generations = [50]
+    depths = list(range(2,30)) # 5 qubits case
+    num_circuits = [4,8,16,32]
+    num_generations = [10,20,30,40,50]
     params = create_params(depths, num_circuits, num_generations)
     multiple_compile(params)
